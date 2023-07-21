@@ -1,8 +1,6 @@
 package com.omer.hrapp.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -12,6 +10,8 @@ public class Feedback {
     @Id
     private Long id;
     private String applicationResults;
+    @Lob
+    @Column(columnDefinition = "text")
     private String explanation;
     private Long applicationStatusId;
     private Long specialistId;

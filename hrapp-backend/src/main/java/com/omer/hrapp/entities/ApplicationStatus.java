@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 public class ApplicationStatus {
     @Id
-    private long id;
+    private Long id;
     private String status;
     private LocalDateTime lastUpdateTime;
     private Long applicationId;

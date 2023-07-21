@@ -1,8 +1,6 @@
 package com.omer.hrapp.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,6 +14,8 @@ public class Job {
     private String code;
     private String title;
     private String location;
+    @Lob
+    @Column(columnDefinition = "text")
     private String description;
     private LocalDateTime activationTime;
     private LocalDateTime deactivationTime;
