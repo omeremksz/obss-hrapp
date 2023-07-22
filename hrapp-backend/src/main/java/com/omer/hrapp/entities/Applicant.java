@@ -11,8 +11,11 @@ public class Applicant {
     private Long id;
 
     private String first_name;
+
     private String last_name;
+
     private String email;
+
     @Lob
     @Column(columnDefinition = "text")
     private String about;

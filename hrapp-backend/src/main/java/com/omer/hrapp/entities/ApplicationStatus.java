@@ -1,9 +1,10 @@
 package com.omer.hrapp.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -15,5 +16,10 @@ public class ApplicationStatus {
     private Long id;
     private String status;
     private LocalDateTime lastUpdateTime;
-    private Long applicationId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="application_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    Application application;
 }
