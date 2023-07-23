@@ -41,5 +41,4 @@ public class Job {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     JobPosition jobPosition;
-
 }

@@ -18,12 +18,6 @@ public class Feedback {
     private String explanation;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="application_status_id",nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    ApplicationStatus applicationStatus;
-
-    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="specialist_id",nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore

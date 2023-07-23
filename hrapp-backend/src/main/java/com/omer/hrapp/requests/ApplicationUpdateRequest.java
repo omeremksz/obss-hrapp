@@ -2,7 +2,12 @@ package com.omer.hrapp.requests;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class ApplicationUpdateRequest {
-    Long applicationStatusId;
+    private Long id;
+    private String applicationStatus;
+    private LocalDateTime lastUpdateTime;
+    private Long feedbackId;
 }

@@ -24,6 +24,11 @@ public class ApplicationController {
         return  applicationService.gelAllApplications(applicantId);
     }
 
+    @GetMapping("/{applicationId}")
+    public Application getApplicationById(@PathVariable Long applicationId){
+        return applicationService.getApplicationById(applicationId);
+    }
+
     @PostMapping
     public Application createNewApplication(@RequestBody ApplicationCreateRequest newApplicationRequest){
         return applicationService.createNewApplication(newApplicationRequest);

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,10 @@ public class Application {
     private Long id;
 
     private LocalDateTime appliedDate;
+
+    private String applicationStatus;
+
+    private LocalDateTime lastUpdateTime;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="applicant_id",nullable = false)
@@ -31,8 +36,8 @@ public class Application {
     Job job;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="application_status_id",nullable = true)
+    @JoinColumn(name="feedback_id",nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    ApplicationStatus applicationStatus;
+    Feedback feedback;
 }
