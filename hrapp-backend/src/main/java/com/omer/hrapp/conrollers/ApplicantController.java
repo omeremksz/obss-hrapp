@@ -5,19 +5,16 @@ import com.omer.hrapp.services.ApplicantService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/applicants")
 public class ApplicantController {
+
     private ApplicantService applicantService;
 
     public ApplicantController(ApplicantService applicantService) {
         this.applicantService = applicantService;
-    }
-
-    @GetMapping
-    public List<Applicant> getAllApplicants(){
-        return applicantService.getAllApplicants();
     }
 
     @GetMapping("/{applicantId}")

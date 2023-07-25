@@ -34,10 +34,4 @@ public class Application {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     Job job;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="feedback_id",nullable = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    Feedback feedback;
 }

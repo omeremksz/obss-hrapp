@@ -22,4 +22,11 @@ public class Feedback {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     Specialist specialist;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="application_id",nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    Application application;
+
 }

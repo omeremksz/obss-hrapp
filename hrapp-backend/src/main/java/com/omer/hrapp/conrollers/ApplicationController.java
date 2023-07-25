@@ -20,8 +20,8 @@ public class ApplicationController {
     }
 
     @GetMapping
-    public List<Application> getAllApplications(@RequestParam Optional<Long> applicantId){
-        return  applicationService.gelAllApplications(applicantId);
+    public List<Application> getAllApplications(@RequestParam Optional<Long> applicantId, @RequestParam Optional<Long> jobId){
+        return  applicationService.gelAllApplications(applicantId,jobId);
     }
 
     @GetMapping("/{applicationId}")
@@ -30,8 +30,8 @@ public class ApplicationController {
     }
 
     @PostMapping
-    public Application createNewApplication(@RequestBody ApplicationCreateRequest newApplicationRequest){
-        return applicationService.createNewApplication(newApplicationRequest);
+    public Application createNewApplication(@RequestBody ApplicationCreateRequest applicationCreateRequest){
+        return applicationService.createNewApplication(applicationCreateRequest);
     }
 
     @PutMapping("/{applicationId}")
