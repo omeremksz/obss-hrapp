@@ -30,7 +30,7 @@ public class Application {
     Applicant applicant;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="job_id",nullable = true)
+    @JoinColumn(name="job_id",nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     Job job;
