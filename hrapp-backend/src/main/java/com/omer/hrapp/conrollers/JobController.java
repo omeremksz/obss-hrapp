@@ -3,6 +3,7 @@ package com.omer.hrapp.conrollers;
 import com.omer.hrapp.entities.Job;
 import com.omer.hrapp.requests.JobCreateRequest;
 import com.omer.hrapp.requests.JobUpdateRequest;
+import com.omer.hrapp.responses.JobResponse;
 import com.omer.hrapp.services.JobService;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class JobController {
     }
 
     @GetMapping
-    public List<Job> getAllJobs(@RequestParam Optional<Long> jobCategoryId, @RequestParam Optional<Long> jobPositionId){
+    public List<JobResponse> getAllJobs(@RequestParam Optional<Long> jobCategoryId, @RequestParam Optional<Long> jobPositionId){
         return jobService.getAllJobs(jobCategoryId, jobPositionId);
     }
 

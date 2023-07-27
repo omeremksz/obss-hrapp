@@ -29,8 +29,8 @@ public class SpecialistService {
     public Specialist createNewSpecialist(SpecialistCreateRequest specialistCreateRequest) {
         Specialist toSave = new Specialist();
         toSave.setId(specialistCreateRequest.getId());
-        toSave.setFirst_name(specialistCreateRequest.getFirst_name());
-        toSave.setLast_name(specialistCreateRequest.getLast_name());
+        toSave.setFirstName(specialistCreateRequest.getFirst_name());
+        toSave.setLastName(specialistCreateRequest.getLast_name());
         toSave.setEmail(specialistCreateRequest.getEmail());
         return specialistRepository.save(toSave);
     }
@@ -39,8 +39,8 @@ public class SpecialistService {
         Optional<Specialist> specialist = specialistRepository.findById(specialistId);
         if(specialist.isPresent()){
             Specialist toUpdate = specialist.get();
-            toUpdate.setFirst_name(specialistUpdateRequest.getFirst_name());
-            toUpdate.setLast_name(specialistUpdateRequest.getLast_name());
+            toUpdate.setFirstName(specialistUpdateRequest.getFirst_name());
+            toUpdate.setLastName(specialistUpdateRequest.getLast_name());
             toUpdate.setEmail(specialistUpdateRequest.getEmail());
             return specialistRepository.save(toUpdate);
         } else

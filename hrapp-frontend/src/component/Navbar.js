@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import WorkIcon from '@mui/icons-material/Work';
 
 const pages = ['Home', 'Log In'];
+let applicantId = 5;
 
 function Navbar() {
   const { palette } = useTheme();
@@ -43,7 +44,7 @@ function Navbar() {
         <Toolbar disableGutters>
           <WorkIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
-            variant="h6"
+            variant="h7"
             noWrap
             component="a"
             href="/"
@@ -51,7 +52,7 @@ function Navbar() {
               mr: 2,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
-              fontWeight: 700,
+              fontWeight: 800,
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
@@ -98,7 +99,7 @@ function Navbar() {
           </Box>
           <WorkIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
-            variant="h5"
+            variant="h7"
             noWrap
             component="a"
             href=""
@@ -115,13 +116,14 @@ function Navbar() {
           >
             JOB PORTAL
           </Typography>
+          
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {/* menu desktop */}
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                <Link to="/" style={{ color: 'white', textDecoration: "none" }}>
+                <Link to="/" style={{ color: 'white', textDecoration: "none" , fontSize:"12px"}}>
                   Home
                 </Link>
               </Button>
@@ -130,7 +132,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="" />
+                <Avatar alt="Remy Sharp" src="" sx={{ width: 36, height: 36 }}/>
               </IconButton>
             </Tooltip>
             <Menu
@@ -150,7 +152,7 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/admin/dashboard">Dashboard</Link></Typography>
+                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/applicants/' + applicantId}}>Dashboard</Link></Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
                 <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/login">Log In</Link></Typography>

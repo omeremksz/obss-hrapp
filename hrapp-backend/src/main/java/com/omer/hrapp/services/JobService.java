@@ -7,10 +7,12 @@ import com.omer.hrapp.entities.Specialist;
 import com.omer.hrapp.repositories.JobRepository;
 import com.omer.hrapp.requests.JobCreateRequest;
 import com.omer.hrapp.requests.JobUpdateRequest;
+import com.omer.hrapp.responses.JobResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class JobService {
@@ -34,15 +36,17 @@ public class JobService {
         return jobRepository.findById(jobId).orElse(null);
     }
 
-    public List<Job> getAllJobs(Optional<Long> jobCategoryId, Optional<Long> jobPositionId) {
+    public List<JobResponse> getAllJobs(Optional<Long> jobCategoryId, Optional<Long> jobPositionId) {
+        List<Job> list;
         if(jobCategoryId.isPresent() && jobPositionId.isPresent()){
-            return jobRepository.findByJobCategoryIdAndJobPositionId(jobCategoryId.get(), jobPositionId.get());
+            list = jobRepository.findByJobCategoryIdAndJobPositionId(jobCategoryId.get(), jobPositionId.get());
         } else if (jobCategoryId.isPresent()) {
-            return jobRepository.findByJobCategoryId(jobCategoryId.get());
+            list = jobRepository.findByJobCategoryId(jobCategoryId.get());
         } else if (jobPositionId.isPresent()) {
-            return jobRepository.findByJobPositionId(jobPositionId.get());
+            list = jobRepository.findByJobPositionId(jobPositionId.get());
         }else
-            return jobRepository.findAll();
+            list = jobRepository.findAll();
+            return list.stream().map(j -> new JobResponse(j)).collect(Collectors.toList());
     }
 
     public Job createNewJob(JobCreateRequest jobCreateRequest) {
