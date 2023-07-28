@@ -5,7 +5,7 @@ import { Home } from './pages/Home/Home';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 import Applicant from './pages/Applicant/Applicant';
-import Job from './pages/Job/Job';
+import JobDetails from './pages/Job/JobDetails';
 
 const App = () => {
   return (
@@ -16,7 +16,7 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/applicants/:applicantId' element={<Applicant/>}/>
-          <Route path='/jobs/:jobId' element={<Job/>}/> {/* Should navigate to job details page*/}
+          <Route path='/jobs/:jobId' element={<JobDetails/>}/> {/* Should navigate to job details page*/}
           <Route path='*' element={<NotFound/>}/>
         </Routes>
         </BrowserRouter>

@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Data
 public class Feedback {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String applicationResults;
     @Lob
@@ -23,10 +24,10 @@ public class Feedback {
     @JsonIgnore
     Specialist specialist;
 
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="application_id",nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     Application application;
-
 }

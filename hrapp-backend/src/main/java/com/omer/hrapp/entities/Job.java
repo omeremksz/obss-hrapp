@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 public class Job {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String code;
     private String title;

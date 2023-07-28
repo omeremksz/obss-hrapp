@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 public class Application {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDateTime appliedDate;
@@ -28,6 +29,7 @@ public class Application {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     Applicant applicant;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="job_id",nullable = false)

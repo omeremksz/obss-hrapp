@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class JobPosition {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String code;
     private String name;

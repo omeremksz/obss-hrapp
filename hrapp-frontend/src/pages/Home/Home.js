@@ -4,6 +4,7 @@ import Header from '../../component/Header';
 import CardElement from '../../component/CardElement';
 import { Box, Container, Stack} from '@mui/material';
 import Footer from '../../component/Footer';
+import JobForm from '../Job/JobForm';
 
 
 export const Home = () => {
@@ -11,8 +12,8 @@ export const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [jobList, setJobList] = useState([]); 
 
-  useEffect(() => {
-      fetch("/jobs")
+  const refreshJobs = () => {
+    fetch("/jobs")
       .then(res => res.json())
       .then(
           (result) => {
@@ -25,9 +26,11 @@ export const Home = () => {
               setError(error);
           }
       )
+  }
 
-  },[]
-  )
+  useEffect(() => {
+    refreshJobs();
+  },[jobList])
 
   if (error) {
       return <div> Error! </div>;
@@ -48,6 +51,8 @@ export const Home = () => {
 
               {/* Job List Column */}
               <Box sx={{flex:5, p:2}}>
+                <JobForm code = {"SBR6643"} specialistId = {1} jobCategoryId = {2} jobPositionId = {3} refreshJobs = {refreshJobs}></JobForm>
+
                 {jobList.map(job => (
                   <CardElement id ={job.id} code = {job.code} title = {job.title} location = {job.location} 
                   description = {job.description} activationTime = {job.activationTime} 
