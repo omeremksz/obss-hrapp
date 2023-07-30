@@ -109,7 +109,7 @@ const JobForm = ({ code, specialistId, jobCategoryId, jobPositionId, refreshJobs
                             {<OutlinedInput 
                                 multiline
                                 placeholder='Job Description'
-                                inputProps={{maxLength:250}}
+                                inputProps={{maxLength:500}}
                                 fullWidth
                                 value={description}
                                 onChange={ (i) => handleDescription(i.target.value)}

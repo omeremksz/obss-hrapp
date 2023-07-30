@@ -17,6 +17,11 @@ public class ApplicantController {
         this.applicantService = applicantService;
     }
 
+    @GetMapping
+    public List<Applicant> getAllApplicants(){
+        return applicantService.getAllApplicants();
+    }
+
     @GetMapping("/{applicantId}")
     public Applicant getApplicantById(@PathVariable Long applicantId){
         return applicantService.getApplicantById(applicantId);

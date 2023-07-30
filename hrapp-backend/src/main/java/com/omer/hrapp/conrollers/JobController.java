@@ -21,12 +21,12 @@ public class JobController {
 
 
     @GetMapping("/{jobId}")
-    public Job getJobById(@PathVariable Long jobId){
-        return jobService.getJobById(jobId);
+    public JobResponse getJobById(@PathVariable Long jobId){
+        return jobService.getJobByIdWithApplications(jobId);
     }
 
     @GetMapping
-    public List<JobResponse> getAllJobs(@RequestParam Optional<Long> jobCategoryId, @RequestParam Optional<Long> jobPositionId){
+    public List<Job> getAllJobs(@RequestParam Optional<Long> jobCategoryId, @RequestParam Optional<Long> jobPositionId){
         return jobService.getAllJobs(jobCategoryId, jobPositionId);
     }
 

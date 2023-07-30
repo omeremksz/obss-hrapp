@@ -15,7 +15,7 @@ import { useTheme } from '@emotion/react';
 import { Link } from 'react-router-dom';
 import WorkIcon from '@mui/icons-material/Work';
 
-const pages = ['Home', 'Log In'];
+const pages = ['Home'];
 let applicantId = 5;
 
 function Navbar() {

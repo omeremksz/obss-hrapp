@@ -15,6 +15,10 @@ public class ApplicantService {
         this.applicantRepository = applicantRepository;
     }
 
+    public List<Applicant> getAllApplicants() {
+        return applicantRepository.findAll();
+    }
+
     public Applicant getApplicantById(Long applicantId) {
         return applicantRepository.findById(applicantId).orElse(null);
     }

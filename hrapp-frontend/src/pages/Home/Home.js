@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../component/Navbar';
 import Header from '../../component/Header';
-import CardElement from '../../component/CardElement';
 import { Box, Container, Stack} from '@mui/material';
 import Footer from '../../component/Footer';
 import JobForm from '../Job/JobForm';
+import Job from '../Job/Job';
 
 
 export const Home = () => {
@@ -51,14 +51,13 @@ export const Home = () => {
 
               {/* Job List Column */}
               <Box sx={{flex:5, p:2}}>
-                <JobForm code = {"SBR6643"} specialistId = {1} jobCategoryId = {2} jobPositionId = {3} refreshJobs = {refreshJobs}></JobForm>
+                <JobForm code = {"SBR6643"} specialistId = {3} jobCategoryId = {6} jobPositionId = {4} refreshJobs = {refreshJobs}></JobForm>
 
                 {jobList.map(job => (
-                  <CardElement id ={job.id} code = {job.code} title = {job.title} location = {job.location} 
+                  <Job id ={job.id} code = {job.code} title = {job.title} location = {job.location} 
                   description = {job.description} activationTime = {job.activationTime} 
                   deactivationTime = {job.deactivationTime} applicantsCount = {job.applicantsCount}
-                  specialistId = {job.specialistId} specialistFirstName = {job.specialistFirstName} specialistLastName = {job.specialistLastName}
-                  jobCategoryId = {job.jobCategoryId} jobCategoryName = {job.jobCategoryName} jobPositionId = {job.jobPositionId} jobPositionName = {job.jobPositionName}/>
+                  jobCategoryName = {job.jobCategory.name} jobPositionName = {job.jobPosition.name}/>
                 ))}
               </Box>
             </Stack>

@@ -3,6 +3,7 @@ package com.omer.hrapp.conrollers;
 import com.omer.hrapp.entities.Application;
 import com.omer.hrapp.requests.ApplicationCreateRequest;
 import com.omer.hrapp.requests.ApplicationUpdateRequest;
+import com.omer.hrapp.responses.ApplicationResponse;
 import com.omer.hrapp.services.ApplicationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class ApplicationController {
     }
 
     @GetMapping
-    public List<Application> getAllApplications(@RequestParam Optional<Long> applicantId, @RequestParam Optional<Long> jobId){
+    public List<ApplicationResponse> getAllApplications(@RequestParam Optional<Long> applicantId, @RequestParam Optional<Long> jobId){
         return  applicationService.gelAllApplications(applicantId,jobId);
     }
 

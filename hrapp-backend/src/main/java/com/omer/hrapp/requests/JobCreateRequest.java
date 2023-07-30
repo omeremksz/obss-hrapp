@@ -12,7 +12,6 @@ public class JobCreateRequest {
     private String description;
     private LocalDateTime activationTime;
     private LocalDateTime deactivationTime;
-    private Integer applicantsCount;
     private Long specialistId;
     private Long jobCategoryId;
     private Long jobPositionId;

@@ -1,9 +1,12 @@
 package com.omer.hrapp.responses;
 
+import com.omer.hrapp.entities.Application;
 import com.omer.hrapp.entities.Job;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 public class JobResponse {
     private Long id;
@@ -13,16 +16,13 @@ public class JobResponse {
     private String description;
     private LocalDateTime activationTime;
     private LocalDateTime deactivationTime;
-    private Integer applicantsCount;
-    private Long specialistId;
     private String specialistFirstName;
     private String specialistLastName;
-    private Long jobCategoryId;
     private String jobCategoryName;
-    private Long jobPositionId;
     private String jobPositionName;
+    private List<ApplicationResponse> jobApplications;
 
-    public JobResponse(Job entity) {
+    public JobResponse(Job entity, List<ApplicationResponse> jobApplications) {
         this.id = entity.getId();
         this.code = entity.getCode();
         this.title = entity.getTitle();
@@ -30,13 +30,10 @@ public class JobResponse {
         this.description = entity.getDescription();
         this.activationTime = entity.getActivationTime();
         this.deactivationTime = entity.getDeactivationTime();
-        this.applicantsCount = entity.getApplicantsCount();
-        this.specialistId = entity.getSpecialist().getId();
         this.specialistFirstName = entity.getSpecialist().getFirstName();
         this.specialistLastName = entity.getSpecialist().getLastName();
-        this.jobCategoryId = entity.getJobCategory().getId();
         this.jobCategoryName = entity.getJobCategory().getName();
-        this.jobPositionId = entity.getJobPosition().getId();
         this.jobPositionName = entity.getJobPosition().getName();
+        this.jobApplications = jobApplications;
     }
 }

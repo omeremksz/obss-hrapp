@@ -2,9 +2,9 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 const Applicant = () => {
-    const {applicantId} = useParams();
+    const {id} = useParams();
   return (
-    <div>Applicant {applicantId}</div>
+    <div>Applicant {id}</div>
   )
 }
 

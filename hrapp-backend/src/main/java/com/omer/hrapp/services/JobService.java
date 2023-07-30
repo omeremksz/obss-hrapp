@@ -1,13 +1,13 @@
 package com.omer.hrapp.services;
 
-import com.omer.hrapp.entities.Job;
-import com.omer.hrapp.entities.JobCategory;
-import com.omer.hrapp.entities.JobPosition;
-import com.omer.hrapp.entities.Specialist;
+import com.omer.hrapp.entities.*;
 import com.omer.hrapp.repositories.JobRepository;
 import com.omer.hrapp.requests.JobCreateRequest;
 import com.omer.hrapp.requests.JobUpdateRequest;
+import com.omer.hrapp.responses.ApplicationResponse;
 import com.omer.hrapp.responses.JobResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,28 +25,35 @@ public class JobService {
 
     SpecialistService specialistService;
 
-    public JobService(JobRepository jobRepository, JobCategoryService jobCategoryService, JobPositionService jobPositionService, SpecialistService specialistService) {
+    ApplicationService applicationService;
+
+    public JobService(JobRepository jobRepository, JobCategoryService jobCategoryService, JobPositionService jobPositionService, SpecialistService specialistService, @Lazy ApplicationService applicationService) {
         this.jobRepository = jobRepository;
         this.jobCategoryService = jobCategoryService;
         this.jobPositionService = jobPositionService;
         this.specialistService = specialistService;
+        this.applicationService = applicationService;
     }
 
     public Job getJobById(Long jobId) {
         return jobRepository.findById(jobId).orElse(null);
     }
 
-    public List<JobResponse> getAllJobs(Optional<Long> jobCategoryId, Optional<Long> jobPositionId) {
-        List<Job> list;
+    public JobResponse getJobByIdWithApplications(Long jobId) {
+        Job job = jobRepository.findById(jobId).orElse(null);
+        List<ApplicationResponse> jobApplications = applicationService.gelAllApplications(Optional.ofNullable(null), Optional.of(jobId));
+        return new JobResponse(job, jobApplications);
+    }
+
+    public List<Job> getAllJobs(Optional<Long> jobCategoryId, Optional<Long> jobPositionId) {
         if(jobCategoryId.isPresent() && jobPositionId.isPresent()){
-            list = jobRepository.findByJobCategoryIdAndJobPositionId(jobCategoryId.get(), jobPositionId.get());
+            return jobRepository.findByJobCategoryIdAndJobPositionId(jobCategoryId.get(), jobPositionId.get());
         } else if (jobCategoryId.isPresent()) {
-            list = jobRepository.findByJobCategoryId(jobCategoryId.get());
+            return jobRepository.findByJobCategoryId(jobCategoryId.get());
         } else if (jobPositionId.isPresent()) {
-            list = jobRepository.findByJobPositionId(jobPositionId.get());
+            return jobRepository.findByJobPositionId(jobPositionId.get());
         }else
-            list = jobRepository.findAll();
-            return list.stream().map(j -> new JobResponse(j)).collect(Collectors.toList());
+            return jobRepository.findAll();
     }
 
     public Job createNewJob(JobCreateRequest jobCreateRequest) {
@@ -64,7 +71,6 @@ public class JobService {
         toSave.setDescription(jobCreateRequest.getDescription());
         toSave.setActivationTime(jobCreateRequest.getActivationTime());
         toSave.setDeactivationTime(jobCreateRequest.getDeactivationTime());
-        toSave.setApplicantsCount(jobCreateRequest.getApplicantsCount());
         toSave.setSpecialist(specialist);
         toSave.setJobCategory(jobCategory);
         toSave.setJobPosition(jobPosition);
@@ -83,7 +89,6 @@ public class JobService {
             toUpdate.setDescription(jobUpdateRequest.getDescription());
             toUpdate.setActivationTime(jobUpdateRequest.getActivationTime());
             toUpdate.setDeactivationTime(jobUpdateRequest.getDeactivationTime());
-            toUpdate.setApplicantsCount(jobUpdateRequest.getApplicantsCount());
             toUpdate.setJobCategory(jobCategory);
             toUpdate.setJobPosition(jobPosition);
             return jobRepository.save(toUpdate);
