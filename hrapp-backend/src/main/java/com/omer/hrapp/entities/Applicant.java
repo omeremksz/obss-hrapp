@@ -11,9 +11,13 @@ public class Applicant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String userName;
+
     private String first_name;
 
     private String last_name;
+
+    private String password;
 
     private String email;
 
