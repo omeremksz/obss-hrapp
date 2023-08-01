@@ -17,14 +17,14 @@ public class JwtTokenProvider {
     public String generateJwtToken(Authentication auth){
         JwtUserDetails userDetails = (JwtUserDetails) auth.getPrincipal();
         Date expiredDate = new Date(new Date().getTime() + EXPIRES_IN);
-        return Jwts.builder().setSubject(Long.toString(userDetails.getId()))
+        return Jwts.builder().setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date()).setExpiration(expiredDate)
                 .signWith(SignatureAlgorithm.HS512, APP_SECRET).compact();
     }
 
-    public Long getUserIdFromJwt(String token){
+    public String getUserNameFromJwt(String token){
         Claims claims = Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJwt(token).getBody();
-        return Long.parseLong(claims.getSubject());
+        return claims.getSubject();
     }
 
     private boolean isTokenExpired(String token) {

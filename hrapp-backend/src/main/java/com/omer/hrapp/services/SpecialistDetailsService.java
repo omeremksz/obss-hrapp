@@ -21,9 +21,4 @@ public class SpecialistDetailsService implements UserDetailsService {
         return JwtUserDetails.create(specialist);
     }
 
-    public UserDetails loadUserById(Long id){
-        Specialist specialist = specialistRepository.findById(id).get();
-        return  JwtUserDetails.create(specialist);
-    }
-
 }

@@ -14,13 +14,11 @@ import java.util.List;
 @Setter
 public class JwtUserDetails implements UserDetails {
 
-    public Long id;
     private String username;
     private String password;
     private List<GrantedAuthority> authorities;
 
-    public JwtUserDetails(Long id, String username, String password, List<GrantedAuthority> authorities) {
-        this.id = id;
+    public JwtUserDetails(String username, String password, List<GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -29,7 +27,7 @@ public class JwtUserDetails implements UserDetails {
     public static JwtUserDetails create(Specialist specialist){
         List<GrantedAuthority> authoritiesList = new ArrayList<>();
         authoritiesList.add(new SimpleGrantedAuthority("specialist"));
-        return new JwtUserDetails(specialist.getId(), specialist.getUserName(), specialist.getPassword(), authoritiesList);
+        return new JwtUserDetails(specialist.getUserName(), specialist.getPassword(), authoritiesList);
     }
 
     @Override
