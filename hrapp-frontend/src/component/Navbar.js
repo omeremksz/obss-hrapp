@@ -155,7 +155,10 @@ function Navbar() {
                 <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/applicants/' + applicantId}}>Dashboard</Link></Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/login">Log In</Link></Typography>
+                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/auth">Specialist Log In</Link></Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/linkedin">Applicant Log In</Link></Typography>
               </MenuItem>
               <MenuItem >
                 <Typography style={{ textDecoration: "none", color: palette.primary.main }} textAlign="center">Log Out</Typography>

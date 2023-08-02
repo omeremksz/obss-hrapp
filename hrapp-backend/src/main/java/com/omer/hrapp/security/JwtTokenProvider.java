@@ -1,51 +1,42 @@
 package com.omer.hrapp.security;
 
-import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 
-@Component
 public class JwtTokenProvider {
-    @Value("${hrapp.app.secret}")
-    private String APP_SECRET;
-    @Value("${hrapp.expires.in}")
-    private Long EXPIRES_IN;
 
-    public String generateJwtToken(Authentication auth){
-        JwtUserDetails userDetails = (JwtUserDetails) auth.getPrincipal();
-        Date expiredDate = new Date(new Date().getTime() + EXPIRES_IN);
-        return Jwts.builder().setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date()).setExpiration(expiredDate)
-                .signWith(SignatureAlgorithm.HS512, APP_SECRET).compact();
+    public static String generateToken(String userName) throws Exception {
+        Instant now = Instant.now();
+        String jwtToken = Jwts.builder()
+                .claim("name", userName)
+                .setSubject("jwt_token")
+                .setId(UUID.randomUUID().toString())
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plus(51, ChronoUnit.MINUTES)))
+                .signWith(SignatureAlgorithm.RS512, getPrivateKey())
+                .compact();
+        return jwtToken;
     }
 
-    public String getUserNameFromJwt(String token){
-        Claims claims = Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJwt(token).getBody();
-        return claims.getSubject();
-    }
+    private static Key getPrivateKey() throws Exception {
 
-    private boolean isTokenExpired(String token) {
-        Date expiration = Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJwt(token).getBody().getExpiration();
-        return expiration.before(new Date());
-    }
-
-    public boolean validateToken(String token){
-        try{
-            Jwts.parser().setSigningKey(APP_SECRET).parseClaimsJwt(token);
-            return !isTokenExpired(token);
-        }catch (SignatureException e) {
-            return false;
-        } catch (MalformedJwtException e) {
-            return false;
-        } catch (ExpiredJwtException e) {
-            return false;
-        } catch (UnsupportedJwtException e) {
-            return false;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+        ClassLoader classLoader = JwtTokenProvider.class.getClassLoader();
+        File file = new File(classLoader.getResource("private.key").getFile());
+        byte [] rsaPrivateKeyArr = FileUtils.readFileToByteArray(file);
+        String rsaPrivateKey = new String(rsaPrivateKeyArr);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getMimeDecoder().decode(rsaPrivateKey));
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePrivate(keySpec);
     }
 }
