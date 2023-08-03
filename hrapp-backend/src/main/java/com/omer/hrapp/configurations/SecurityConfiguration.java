@@ -1,13 +1,14 @@
 package com.omer.hrapp.configurations;
 
 import com.omer.hrapp.security.JwtTokenProvider;
-import com.omer.hrapp.security.LdapAuthenticationProvider;
+import com.omer.hrapp.security.LdapAuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,7 +36,7 @@ public class SecurityConfiguration {
 
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new LdapAuthenticationProvider(environment)).eraseCredentials(false);
+        auth.authenticationProvider(new LdapAuthProvider(environment)).eraseCredentials(false);
     }
 
     @Bean
@@ -47,9 +48,8 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .csrf()
-                .disable()
-                .httpBasic();
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(Customizer.withDefaults());
 
         return httpSecurity.build();
     }

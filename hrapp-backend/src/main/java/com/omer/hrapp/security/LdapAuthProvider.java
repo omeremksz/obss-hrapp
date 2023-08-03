@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component
-public class LdapAuthenticationProvider implements AuthenticationProvider {
+public class LdapAuthProvider implements AuthenticationProvider {
 
     private Environment environment;
 
@@ -25,7 +25,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
 
     private LdapTemplate ldapTemplate;
 
-    public LdapAuthenticationProvider(Environment environment) {
+    public LdapAuthProvider(Environment environment) {
         this.environment = environment;
     }
 

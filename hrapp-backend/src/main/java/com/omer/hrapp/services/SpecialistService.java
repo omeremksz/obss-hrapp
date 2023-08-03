@@ -26,6 +26,10 @@ public class SpecialistService {
         return specialistRepository.findById(specialistId).orElse(null);
     }
 
+    public Specialist getSpecialistByUserName(String userName){
+        return specialistRepository.findByUserName(userName);
+    }
+
     public Specialist createNewSpecialist(SpecialistCreateRequest specialistCreateRequest) {
         Specialist toSave = new Specialist();
         toSave.setId(specialistCreateRequest.getId());

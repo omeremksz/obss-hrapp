@@ -3,14 +3,17 @@ import React, { useState } from 'react'
 import Navbar from '../../component/Navbar'
 import { LockClockOutlined } from '@mui/icons-material'
 import Footer from '../../component/Footer'
+import { useNavigate } from 'react-router-dom';
 
 
-const Authentication = () => {
+const Auth = () => {
 
-    const [username, setUserName] = useState("");
+    const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-    const handleUsername = (value) => {
+    const handleUserName = (value) => {
+        console.log("Username:", value);
         setUserName(value);
     }
 
@@ -19,8 +22,32 @@ const Authentication = () => {
     }
 
     const handleLogin = () => {
+        sendRequest();
         setUserName("");
         setPassword("");
+        navigate("/auth");
+    }
+
+    const sendRequest = () => {
+        fetch("/auth",
+        {
+            method: "POST",
+            headers: 
+            {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                userName : userName,
+                password: password,
+            })
+        })
+        .then((res) => res.json())
+        .then((result) => {
+                        localStorage.setItem("tokenKey", result.message);
+                        localStorage.setItem("currentUser", result.id);
+                        localStorage.setItem("userName", userName);
+                    })
+        .catch((err) => console.log(err))
     }
 
   return (
@@ -42,8 +69,9 @@ const Authentication = () => {
                                     shrink: true,
                                 }}
                                 placeholder="Username"
-                                onChange={(i) => handleUsername(i.target.value)}
+                                onChange={(i) => handleUserName(i.target.value)}
                             />
+
                         <TextField sx={{ mb: 3 }}
                             fullWidth
                             id="password"
@@ -56,7 +84,7 @@ const Authentication = () => {
                             placeholder="Password"
                             onChange={(i) => handlePassword(i.target.value)}
                         />
-                        <Button fullWidth variant="contained" type='submit' onChange={handleLogin}>Log In</Button>
+                        <Button fullWidth variant="contained" onClick={() => handleLogin()}>Log In</Button>
                     </Box>
                 </Box>
             </Box>
@@ -66,4 +94,4 @@ const Authentication = () => {
   )
 }
 
-export default Authentication
+export default Auth
