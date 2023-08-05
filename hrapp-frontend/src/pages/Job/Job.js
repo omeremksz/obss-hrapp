@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 const Job = (props) => {
     const { id, title, location, description, activationTime, deactivationTime, jobCategoryName, jobPositionName} = props;
-
+    
     const { palette } = useTheme();
 
     return(

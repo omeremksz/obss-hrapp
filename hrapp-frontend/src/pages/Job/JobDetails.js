@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -13,13 +12,13 @@ import Navbar from '../../component/Navbar';
 import Footer from '../../component/Footer';
 import Header from '../../component/Header';
 
-let applicantId = 3;
 
 const JobDetails = () => {
     const { id } = useParams();
     const [job, setJob] = useState(null);
     const [isApplied, setIsApplied] = useState(false);
     const [applicationCount, setApplicationCount] = useState(0);
+    const isAuthorized = localStorage.getItem("currentUser") == null ? false : true;
 
     const getJob = useCallback(() => {
       fetch("/jobs/"+id)
@@ -46,15 +45,27 @@ const JobDetails = () => {
           headers: 
           {
               "Content-Type": "application/json",
+              "Authorization": localStorage.getItem("tokenKey"),
           },
           body: JSON.stringify({
-              applicantId: applicantId,
-              jobId: id
+              applicantId: localStorage.getItem("currentUser"),
+              jobId: id,
           })
       })
       .then((res) => res.json())
       .catch((err) => console.log("Error!"))
   }
+
+  const checkApplications = useCallback(() => {
+    if (job && Array.isArray(job.jobApplications)) {
+      const jobControl = job.jobApplications.find(
+        (application) => ""+application.applicantId === localStorage.getItem("currentUser")
+      );
+      if (jobControl != null) {
+        setIsApplied(true);
+      }
+    }
+  }, [job]);
 
     const handleSubmit = () => {
       if(!isApplied){
@@ -64,20 +75,9 @@ const JobDetails = () => {
       }
     }
 
-    useEffect(() => {
-      getJob()
-    }, [getJob])
+    useEffect(() => { getJob() }, [getJob])
     
-    useEffect(() => {
-      if (job && Array.isArray(job.jobApplications)) {
-        const jobControl = job.jobApplications.find(
-          (application) => application.applicantId === applicantId
-        );
-        if (jobControl != null) {
-          setIsApplied(true);
-        }
-      }
-    }, [job])
+    useEffect(() => { checkApplications()}, [job, checkApplications])
 
     return(
       <>
@@ -122,7 +122,7 @@ const JobDetails = () => {
                         </CardContent>
                         <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
                           <CardActions>
-                            <Button variant="contained" size="small" onClick={handleSubmit} disabled={isApplied}>Apply</Button>
+                            <Button variant="contained" size="small" onClick={handleSubmit} disabled={isApplied || !isAuthorized}>Apply</Button>
                             </CardActions>
                         </Box>
                       </>

@@ -1,1 +1,1 @@
-import ReactDOM from 'react-dom/client';
+/jobs/:id

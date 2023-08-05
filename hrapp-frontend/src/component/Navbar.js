@@ -12,16 +12,16 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@emotion/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import WorkIcon from '@mui/icons-material/Work';
 
 const pages = ['Home'];
-let applicantId = 5;
 
 function Navbar() {
   const { palette } = useTheme();
   const [anchorElNav, setAnchorElNav] = React.useState(null)
   const [anchorElUser, setAnchorElUser] = React.useState(null)
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -37,6 +37,13 @@ function Navbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleLogOut = () => {
+    localStorage.removeItem("tokenKey");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("userName");
+    navigate(0);
+  }
 
   return (
     <AppBar position="static">
@@ -58,7 +65,7 @@ function Navbar() {
               textDecoration: 'none',
             }}
           >
-            JOB PORTAL
+            CAREER HUB
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -114,7 +121,7 @@ function Navbar() {
               textDecoration: 'none',
             }}
           >
-            JOB PORTAL
+            CAREER HUB
           </Typography>
           
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -151,18 +158,25 @@ function Navbar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/applicants/' + applicantId}}>Dashboard</Link></Typography>
-              </MenuItem>
+              {localStorage.getItem("currentUser") == null ? (
+              <Box>
               <MenuItem onClick={handleCloseUserMenu}>
                 <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/auth">Specialist Log In</Link></Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
                 <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/linkedin">Applicant Log In</Link></Typography>
+              </MenuItem> 
+              </Box>
+              ) :(
+              <Box>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/specialists/' + localStorage.getItem("currentUser")}}>Dashboard</Link></Typography>
               </MenuItem>
-              <MenuItem >
-                <Typography style={{ textDecoration: "none", color: palette.primary.main }} textAlign="center">Log Out</Typography>
+              <MenuItem onClick={handleLogOut}>
+                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/'}}>Log Out</Link></Typography>
               </MenuItem>
+              </Box>
+              )}
             </Menu>
           </Box>
         </Toolbar>

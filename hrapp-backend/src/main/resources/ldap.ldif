@@ -44,6 +44,16 @@ sn: Alex
 uid: ben
 userPassword: benspassword
 
+dn: uid=omer,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Omer Emeksiz
+sn: Emeksiz
+uid: omer
+userPassword: omer6637
+
 dn: uid=bob,ou=people,dc=springframework,dc=org
 objectclass: top
 objectclass: person

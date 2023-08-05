@@ -13,7 +13,6 @@ const Auth = () => {
     const navigate = useNavigate();
 
     const handleUserName = (value) => {
-        console.log("Username:", value);
         setUserName(value);
     }
 
@@ -21,11 +20,10 @@ const Auth = () => {
         setPassword(value);
     }
 
-    const handleLogin = () => {
-        sendRequest();
+    const handleLogin = (path) => {
+        sendRequest(path);
         setUserName("");
         setPassword("");
-        navigate("/auth");
     }
 
     const sendRequest = () => {
@@ -43,9 +41,13 @@ const Auth = () => {
         })
         .then((res) => res.json())
         .then((result) => {
+                        console.log("token:", result.message);
                         localStorage.setItem("tokenKey", result.message);
+                        console.log("user id:", result.id);
                         localStorage.setItem("currentUser", result.id);
+                        console.log("username:", userName);
                         localStorage.setItem("userName", userName);
+                        navigate("/");
                     })
         .catch((err) => console.log(err))
     }
@@ -94,4 +96,4 @@ const Auth = () => {
   )
 }
 
-export default Auth
+export default Auth;

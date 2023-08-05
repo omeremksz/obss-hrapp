@@ -10,11 +10,14 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class LdapAuthProvider implements AuthenticationProvider {
@@ -45,8 +48,10 @@ public class LdapAuthProvider implements AuthenticationProvider {
         Filter filter = new EqualsFilter("uid", authentication.getName());
         Boolean authenticate = ldapTemplate.authenticate(LdapUtils.emptyLdapName(), filter.encode(), authentication.getCredentials().toString());
         if(authenticate){
-            UserDetails userDetails = new User(authentication.getName(), authentication.getCredentials().toString(), new ArrayList<>());
-            Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials().toString(), new ArrayList<>());
+            List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+            grantedAuthorities.add(new SimpleGrantedAuthority("SPECIALIST"));
+            UserDetails userDetails = new User(authentication.getName(), authentication.getCredentials().toString(), grantedAuthorities );
+            Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials().toString(), grantedAuthorities);
             return auth;
         } else
             return null;
