@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 
 const Job = (props) => {
-    const { id, title, location, description, activationTime, deactivationTime, jobCategoryName, jobPositionName} = props;
+    const { id, title, location, description, activationTime, deactivationTime, jobCategory, jobPosition} = props;
     
     const { palette } = useTheme();
 
@@ -25,7 +25,7 @@ const Job = (props) => {
                     {title}
                 </Typography>
                 <Typography sx={{ mb: 1.5 , fontSize: 15}} color="text.secondary">
-                    {jobCategoryName} | {jobPositionName}
+                    {jobCategory} | {jobPosition}
                 </Typography>
                 <Typography variant="body2">
                     Description: {description.split(" ").slice(0, 10).join(" ") + "..."}

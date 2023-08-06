@@ -31,8 +31,8 @@ public class ApplicantService {
         Optional<Applicant> applicant = applicantRepository.findById(applicantId);
         if(applicant.isPresent()){
             Applicant foundApplicant = applicant.get();
-            foundApplicant.setFirst_name(newApplicant.getFirst_name());
-            foundApplicant.setLast_name(newApplicant.getLast_name());
+            foundApplicant.setFirstName(newApplicant.getFirstName());
+            foundApplicant.setLastName(newApplicant.getLastName());
             foundApplicant.setEmail(newApplicant.getEmail());
             foundApplicant.setAbout(newApplicant.getAbout());
             applicantRepository.save(foundApplicant);

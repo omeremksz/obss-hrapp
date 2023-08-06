@@ -46,7 +46,7 @@ public class AuthController {
         if (specialist != null) {
             return ResponseEntity.ok(new AuthResponse(specialist.getId(), "Bearer " + token));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     private void authenticate(Authentication auth) throws Exception {

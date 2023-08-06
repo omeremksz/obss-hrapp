@@ -7,6 +7,7 @@ import com.omer.hrapp.repositories.ApplicationRepository;
 import com.omer.hrapp.requests.ApplicationCreateRequest;
 import com.omer.hrapp.requests.ApplicationUpdateRequest;
 import com.omer.hrapp.responses.ApplicationResponse;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,7 +22,7 @@ public class ApplicationService {
     private ApplicantService applicantService;
     private JobService jobService;
 
-    public ApplicationService(ApplicationRepository applicationRepository, ApplicantService applicantService, JobService jobService) {
+    public ApplicationService(ApplicationRepository applicationRepository, ApplicantService applicantService, @Lazy JobService jobService) {
         this.applicationRepository = applicationRepository;
         this.applicantService = applicantService;
         this.jobService = jobService;
@@ -36,7 +37,7 @@ public class ApplicationService {
         } else if (jobId.isPresent()) {
             applicationList = applicationRepository.findByJobId(jobId.get());
         } else applicationList = applicationRepository.findAll();
-        return applicationList.stream().map(a -> new ApplicationResponse(a)).collect((Collectors.toList()));
+        return applicationList.stream().map(a -> new ApplicationResponse(a)).collect(Collectors.toList());
     }
 
     public Application getApplicationById(Long applicationId) {

@@ -6,27 +6,43 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Alert, Box, OutlinedInput, Snackbar} from '@mui/material';
 import { useState } from 'react';
-import { useEffect } from 'react';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
+const generateRandomCode = () => {
+    const characters = 'abcdefghijklmnopqrstuvwxyz01234567890123456789';
+    const randomCode = Array.from({ length: 6 }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+    return randomCode;
+};
 
 const JobForm = () => {
-        let code = "smthnk";
-        let jobCategoryId = 1;
-        let jobPositionId = 1;
+        const code = "#"+generateRandomCode();
         const specialistId = localStorage.getItem("currentUser");
         const[title, setTitle] = useState("");
+        const[jobCategory, setJobCategory] = useState("");
+        const[jobPosition, setJobPosition] = useState("");
         const[description, setDescription] = useState("");
         const[location, setLocation] = useState("");
-        const[activationTime, setActivationTime] = useState("");
-        const[deactivationTime, setDectivationTime] = useState("");
-        const [error, setError] = useState(null);
-        const [isLoaded, setIsLoaded] = useState(false);
-        const [jobList, setJobList] = useState([]); 
+        const[activationTime, setActivationTime] = useState(null);
+        const[deactivationTime, setDectivationTime] = useState(null);
+    
 
         const[isPosted, setIsPosted] = useState(false);
 
         const handleTitle = (value) => {
             setTitle(value);
+            setIsPosted(false);
+        }
+
+        const handleJobCategory = (value) => {
+            setJobCategory(value);
+            setIsPosted(false);
+        }
+
+        const handleJobPosition = (value) => {
+            setJobPosition(value);
             setIsPosted(false);
         }
 
@@ -37,16 +53,6 @@ const JobForm = () => {
 
         const handleLocation = (value) => {
             setLocation(value);
-            setIsPosted(false);
-        }
-
-        const handleActivationTime = (value) => {
-            setActivationTime(value);
-            setIsPosted(false);
-        }
-
-        const handleDectivationTime = (value) => {
-            setDectivationTime(value);
             setIsPosted(false);
         }
 
@@ -66,9 +72,9 @@ const JobForm = () => {
                     location: location,
                     activationTime: activationTime,
                     deactivationTime: deactivationTime,
+                    jobCategory: jobCategory,
+                    jobPosition: jobPosition,
                     specialistId: specialistId,
-                    jobCategoryId: jobCategoryId,
-                    jobPositionId: jobPositionId
                 })
             })
             .then((res) => res.json())
@@ -79,11 +85,13 @@ const JobForm = () => {
             saveJob();
             setIsPosted(true);
             setTitle("");
+            setJobCategory("");
+            setJobPosition("");
             setDescription("");
             setLocation("");
-            setActivationTime("");
-            setDectivationTime("");
-            refreshJobs();
+            setActivationTime(null);
+            setDectivationTime(null);
+            window.location.reload();
         }
 
         const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
@@ -94,101 +102,88 @@ const JobForm = () => {
             setIsPosted(false);
           };
         
-          const refreshJobs = () => {
-            fetch("/jobs")
-              .then(res => res.json())
-              .then(
-                  (result) => {
-                      setIsLoaded(true);
-                      setJobList(result);
-                  },
-                  (error) => {
-                      console.log(error);
-                      setIsLoaded(true);
-                      setError(error);
-                  }
-              )
-          }
-        
-          useEffect(() => {
-            refreshJobs();
-          },[jobList])
-        
-          if (error) {
-              return <div> Error! </div>;
-          } else if (!isLoaded){
-              return <div> Loading... </div>
-          }
-          else {
-            return (
-                <Box sx={{ width: '76%', }}>
-                    <Snackbar open={isPosted} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
-                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%'}}>
-                            Job is posted successfully!
-                        </Alert>
-                    </Snackbar>
-                    <Card sx={{ minWidth: 275, mb: 3, mt: 3 }}>
-                        <CardContent >
-                            <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
-                                {<OutlinedInput 
-                                    multiline
-                                    placeholder='Job Title'
-                                    inputProps={{maxLength:50}}
-                                    fullWidth
-                                    value={title}
-                                    onChange={ (i) => handleTitle(i.target.value)}
-                                />}
-                            </Typography>
-                            <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
-                                {<OutlinedInput 
-                                    multiline
-                                    placeholder='Job Description'
-                                    inputProps={{maxLength:500}}
-                                    fullWidth
-                                    value={description}
-                                    onChange={ (i) => handleDescription(i.target.value)}
-                                />}
-                            </Typography>
-                            <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
-                                {<OutlinedInput 
-                                    multiline
-                                    placeholder='Location'
-                                    inputProps={{maxLength:25}}
-                                    fullWidth
-                                    value={location}
-                                    onChange={ (i) => handleLocation(i.target.value)}
-                                />}
-                            </Typography>
-                            <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
-                                {<OutlinedInput 
-                                    multiline
-                                    placeholder='Activation Time'
-                                    inputProps={{maxLength:25}}
-                                    fullWidth
-                                    value={activationTime}
-                                    onChange={ (i) => handleActivationTime(i.target.value)}
-                                />}
-                            </Typography>
-                            <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
-                                {<OutlinedInput 
-                                    multiline
-                                    placeholder='Deactivation Time'
-                                    inputProps={{maxLength:25}}
-                                    fullWidth
-                                    value={deactivationTime}
-                                    onChange={ (i) => handleDectivationTime(i.target.value)}
-                                />}
-                            </Typography>
-                        </CardContent>
-                        <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
-                            <CardActions>
-                                <Button variant="contained" size="small" onClick={handleSubmit}>Post</Button>
-                            </CardActions>
-                        </Box>
-                    </Card>
-                </Box>
-            );
-        }
-    }
+        return (
+            <Box sx={{ width: '76%', }}>
+                <Snackbar open={isPosted} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%'}}>
+                        Job is posted successfully!
+                    </Alert>
+                </Snackbar>
+                <Card sx={{ minWidth: 275, mb: 3, mt: 3 }}>
+                    <CardContent >
+                        <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
+                            {<OutlinedInput 
+                                multiline
+                                placeholder='Job Title'
+                                inputProps={{maxLength:50}}
+                                fullWidth
+                                value={title}
+                                onChange={ (i) => handleTitle(i.target.value)}
+                            />}
+                        </Typography>
+                        <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
+                            {<OutlinedInput 
+                                multiline
+                                placeholder='Job Category'
+                                inputProps={{maxLength:25}}
+                                fullWidth
+                                value={jobCategory}
+                                onChange={ (i) => handleJobCategory(i.target.value)}
+                            />}
+                        </Typography>
+                        <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
+                            {<OutlinedInput 
+                                multiline
+                                placeholder='Job Position'
+                                inputProps={{maxLength:25}}
+                                fullWidth
+                                value={jobPosition}
+                                onChange={ (i) => handleJobPosition(i.target.value)}
+                            />}
+                        </Typography>
+                        <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
+                            {<OutlinedInput 
+                                multiline
+                                placeholder='Job Description'
+                                inputProps={{maxLength:500}}
+                                fullWidth
+                                value={description}
+                                onChange={ (i) => handleDescription(i.target.value)}
+                            />}
+                        </Typography>
+                        <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
+                            {<OutlinedInput 
+                                multiline
+                                placeholder='Location'
+                                inputProps={{maxLength:25}}
+                                fullWidth
+                                value={location}
+                                onChange={ (i) => handleLocation(i.target.value)}
+                            />}
+                        </Typography>
+                        <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['DateTimePicker']} >
+                                <DateTimePicker label="Activation Time" value={activationTime} onChange={setActivationTime} />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                        </Typography>
+                        <Typography >
+                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                            <DemoContainer components={['DateTimePicker']} >
+                                <DateTimePicker label="Deactivation Time" value={deactivationTime} onChange={setDectivationTime} />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                        </Typography>
+                    </CardContent>
+                    <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
+                        <CardActions>
+                            <Button variant="contained" size="small" onClick={handleSubmit}>Post</Button>
+                        </CardActions>
+                    </Box>
+                </Card>
+            </Box>
+        );
+}
 
 export default JobForm;

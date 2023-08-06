@@ -26,8 +26,8 @@ public class JobController {
     }
 
     @GetMapping
-    public List<Job> getAllJobs(@RequestParam Optional<Long> jobCategoryId, @RequestParam Optional<Long> jobPositionId){
-        return jobService.getAllJobs(jobCategoryId, jobPositionId);
+    public List<JobResponse> getAllJobsBySpecialistId(@RequestParam Optional<Long> specialistId){
+        return jobService.getAllJobsBySpecialistId(specialistId);
     }
 
     @PostMapping

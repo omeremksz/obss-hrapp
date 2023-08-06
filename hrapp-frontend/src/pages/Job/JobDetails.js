@@ -99,10 +99,10 @@ const JobDetails = () => {
                               <Box component="span" sx={{ fontWeight: 700 }}>Code</Box>: {job.code}
                             </Typography>
                             <Typography variant="body2" >
-                              <Box component="span" sx={{ fontWeight: 700 }}>Category</Box>: {job.jobCategoryName}
+                              <Box component="span" sx={{ fontWeight: 700 }}>Category</Box>: {job.jobCategory}
                             </Typography>
                             <Typography variant="body2" >
-                              <Box component="span" sx={{ fontWeight: 700 }}>Position</Box>: {job.jobPositionName}
+                              <Box component="span" sx={{ fontWeight: 700 }}>Position</Box>: {job.jobPosition}
                             </Typography>
                             <Typography variant="body2" >
                               <Box component="span" sx={{ fontWeight: 700 }}>Location</Box>: {job.location}

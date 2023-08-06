@@ -32,9 +32,9 @@ const Home = () => {
   },[jobList])
 
   if (error) {
-      return <div> Error! </div>;
+      return <Box> Error! </Box>;
   } else if (!isLoaded){
-      return <div> Loading... </div>
+      return <Box> Loading... </Box>
   }
   else {
       return (
@@ -47,13 +47,11 @@ const Home = () => {
               direction={{ xs: 'column', sm: 'row' }}
               spacing={{ xs: 1, sm: 2, md: 4 }}
             >
-
               <Box sx={{flex:5, p:2}}>
                 {jobList.map(job => (
                   <Job id ={job.id} code = {job.code} title = {job.title} location = {job.location} 
                   description = {job.description} activationTime = {job.activationTime} 
-                  deactivationTime = {job.deactivationTime} applicantsCount = {job.applicantsCount}
-                  jobCategoryName = {job.jobCategory.name} jobPositionName = {job.jobPosition.name}/>
+                  deactivationTime = {job.deactivationTime} jobCategory = {job.jobCategory} jobPosition = {job.jobPosition}/>
                 ))}
               </Box>
             </Stack>

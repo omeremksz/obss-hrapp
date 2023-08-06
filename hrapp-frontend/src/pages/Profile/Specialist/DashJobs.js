@@ -8,24 +8,38 @@ import AddIcon from '@mui/icons-material/Add';
 import JobForm from '../../Job/JobForm';
 import { useState } from 'react';
 import CancelIcon from '@mui/icons-material/Cancel';
+import DashApplications from './DashApplications';
 
 const renderRow = (props: ListChildComponentProps) => {
-  const { index, style } = props;
+  const { index, style, jobList, handleApplicationButton } = props;
 
-  const handleButtonClick = (buttonText: string) => {
+  const deleteJob = (jobId) => {
+      fetch("/jobs/"+jobId,  {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization" : localStorage.getItem("tokenKey"),
+      },
+    })
+    .then(() => {
+      window.location.reload();
+    })
   }
+
+  const handleDeleteButton = (jobId) => {
+    deleteJob(jobId);
+  }
+
+  const job = jobList[index];
   
   return (
     <ListItem style={style} key={index} component="div" disablePadding >
       <ListItemButton>
-        <ListItemText primary={`Item ${index + 1}`} />
-        <Button size="small" variant="contained" color="primary" onClick={() => handleButtonClick('Button 1')} >
+        <ListItemText primary={`${job.title} | ${job.location} | ${job.code}`} />
+        <Button size="small" variant="contained" color="primary" onClick={() => handleApplicationButton(job.id)} >
          Applications
         </Button>
-        <Button size="small" variant="contained" color="secondary" onClick={() => handleButtonClick('Button 2')} sx={{ marginLeft: 2}}>
-          Edit
-        </Button>
-        <Button size="small" variant="outlined" onClick={() => handleButtonClick('Button 3')} sx={{ marginLeft: 2, color: "red", borderColor: 'red'}}>
+        <Button size="small" variant="outlined" onClick={() => handleDeleteButton(job.id)} sx={{ marginLeft: 2, color: "red", borderColor: 'red'}}>
           Delete
         </Button>
       </ListItemButton>
@@ -33,8 +47,11 @@ const renderRow = (props: ListChildComponentProps) => {
   );
 }
 
-const DashJobs = () => {
+const DashJobs = (props) => {
+  const { jobList } = props;
   const [showCreateJob, setShowCreateJob] = useState(false);
+  const [showApplications, setShowApplications] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   const handleCreateJobClick = () => {
     if(!showCreateJob)
@@ -43,11 +60,20 @@ const DashJobs = () => {
       setShowCreateJob(false)
   };
 
+  const handleApplicationButton = (jobId) => {
+    setShowApplications(true);
+    setSelectedJob(jobId);
+  };
+
   return (
     <Box>
-      { showCreateJob ? (
+      {showApplications ? (
+      <Box>
+        <DashApplications jobId={selectedJob}/> 
+      </Box>
+      ) : showCreateJob ? (
         <Box >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingLeft: 24, paddingRight: 24, paddingTop:2, }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingLeft: 27, paddingRight: 27, paddingTop:2, }}>
           <Typography variant="h5" component="h1" sx={{ fontFamily: 'Arial', color: '#333', fontWeight: 'bold' }}>
               New Job
           </Typography>
@@ -87,10 +113,10 @@ const DashJobs = () => {
           height={770}
           width={1200}
           itemSize={85}
-          itemCount={15}
+          itemCount={jobList.length}
           overscanCount={5}
         >
-          {renderRow}
+          {(props) => renderRow({ ...props, jobList, handleApplicationButton })}
         </FixedSizeList>
       </Box> 
       </Box>

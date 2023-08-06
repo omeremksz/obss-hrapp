@@ -13,9 +13,9 @@ public class Applicant {
 
     private String userName;
 
-    private String first_name;
+    private String firstName;
 
-    private String last_name;
+    private String lastName;
 
     private String password;
 

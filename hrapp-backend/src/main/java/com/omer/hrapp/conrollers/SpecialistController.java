@@ -3,6 +3,7 @@ package com.omer.hrapp.conrollers;
 import com.omer.hrapp.entities.Specialist;
 import com.omer.hrapp.requests.SpecialistCreateRequest;
 import com.omer.hrapp.requests.SpecialistUpdateRequest;
+import com.omer.hrapp.responses.SpecialistResponse;
 import com.omer.hrapp.services.SpecialistService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class SpecialistController {
     }
 
     @GetMapping("/{specialistId}")
-    public Specialist getSpecialistById(@PathVariable Long specialistId){
-        return specialistService.getSpecialistById(specialistId);
+    public SpecialistResponse getSpecialistById(@PathVariable Long specialistId){
+        return specialistService.getSpecialistByIdWithJob(specialistId);
     }
 
     @PostMapping

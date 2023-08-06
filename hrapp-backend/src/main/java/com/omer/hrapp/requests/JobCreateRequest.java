@@ -12,7 +12,7 @@ public class JobCreateRequest {
     private String description;
     private LocalDateTime activationTime;
     private LocalDateTime deactivationTime;
+    private String jobCategory;
+    private String  jobPosition;
     private Long specialistId;
-    private Long jobCategoryId;
-    private Long jobPositionId;
 }

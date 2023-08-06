@@ -29,18 +29,13 @@ public class Job {
 
     private LocalDateTime deactivationTime;
 
+    private String jobCategory;
+
+    private String jobPosition;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="specialist_id",nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     Specialist specialist;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="job_category_id",nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    JobCategory jobCategory;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="job_Position_id",nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    JobPosition jobPosition;
 }

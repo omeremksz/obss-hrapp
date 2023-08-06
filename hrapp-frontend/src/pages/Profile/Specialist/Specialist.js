@@ -16,15 +16,15 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import WorkIcon from '@mui/icons-material/Work';
-import CategoryIcon from '@mui/icons-material/Category';
-import BusinessIcon from '@mui/icons-material/Business';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import BlockIcon from '@mui/icons-material/Block';
 import HomeIcon from '@mui/icons-material/Home';
 import { useState } from 'react';
 import DashJobs from './DashJobs';
-import DashCategories from './DashCategories';
-import DashPositions from './DashPositions';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback } from 'react';
+import { useEffect } from 'react';
+import SpecialistProfile from './SpecialistProfile';
 
 const drawerWidth = 240;
 
@@ -98,10 +98,36 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const Specialist = () => {
-  const theme = useTheme();
+  const { id } = useParams();
   const [open, setOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('Jobs');
+  const [specialist, setSpecialist] = useState(null);
+  const [jobList, setJobList] = useState([]);
+  const theme = useTheme();
   const navigate = useNavigate();
+
+  const getSpecialist = useCallback(() => {
+    fetch("/specialists/"+id ,{  
+      headers: {
+              "Authorization": localStorage.getItem("tokenKey"),
+          },
+        })
+    .then(res => res.json())
+    .then(
+        (result) => {
+            setSpecialist(result);
+            if (result.jobs && Array.isArray(result.jobs)) {
+              setJobList(result.jobs);
+            }
+        },
+        (error) => {
+            console.log(error)
+        }
+    )
+    },[id]
+  )
+
+  useEffect(() => { getSpecialist() }, [getSpecialist]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -133,7 +159,7 @@ const Specialist = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            HR Specialist Profile
+            HR Specialist Dashboard
           </Typography>
         </Toolbar>
       </AppBar>
@@ -144,7 +170,7 @@ const Specialist = () => {
           </IconButton>
         </DrawerHeader>
         <List>
-          {['Jobs', 'Categories', 'Positions', 'Blacklist', 'Home'].map((text, index) => (
+          {['Profile', 'Jobs', 'Blacklist', 'Home'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => handleSidebarItemClick(text)}
@@ -161,7 +187,7 @@ const Specialist = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  {index === 0 ? <WorkIcon /> : index === 1 ? <CategoryIcon /> : index === 2 ? <BusinessIcon /> : index === 3 ? <BlockIcon /> : <HomeIcon />}
+                  {index === 0 ? <AccountBoxIcon /> : index === 1 ? <WorkIcon /> : index === 2 ? <BlockIcon /> : <HomeIcon />}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
@@ -173,9 +199,8 @@ const Specialist = () => {
         <DrawerHeader />
 
         <Box >
-            {activeItem === 'Jobs'? ( <DashJobs /> ) :
-            activeItem === 'Categories'? ( <DashCategories /> ) :
-            activeItem === 'Positions'? ( <DashPositions /> ) :
+            {activeItem === 'Profile'? ( <SpecialistProfile specialist = {specialist}/> ) :
+            activeItem === 'Jobs'? ( <DashJobs jobList = {jobList}/> ) :
             activeItem === 'Home'?  (navigate("/")): 
             null
             }

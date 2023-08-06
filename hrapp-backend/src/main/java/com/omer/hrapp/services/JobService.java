@@ -6,8 +6,6 @@ import com.omer.hrapp.requests.JobCreateRequest;
 import com.omer.hrapp.requests.JobUpdateRequest;
 import com.omer.hrapp.responses.ApplicationResponse;
 import com.omer.hrapp.responses.JobResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,18 +17,12 @@ public class JobService {
 
     JobRepository jobRepository;
 
-    JobCategoryService jobCategoryService;
-
-    JobPositionService jobPositionService;
-
     SpecialistService specialistService;
 
     ApplicationService applicationService;
 
-    public JobService(JobRepository jobRepository, JobCategoryService jobCategoryService, JobPositionService jobPositionService, SpecialistService specialistService, @Lazy ApplicationService applicationService) {
+    public JobService(JobRepository jobRepository, SpecialistService specialistService, ApplicationService applicationService) {
         this.jobRepository = jobRepository;
-        this.jobCategoryService = jobCategoryService;
-        this.jobPositionService = jobPositionService;
         this.specialistService = specialistService;
         this.applicationService = applicationService;
     }
@@ -45,22 +37,18 @@ public class JobService {
         return new JobResponse(job, jobApplications);
     }
 
-    public List<Job> getAllJobs(Optional<Long> jobCategoryId, Optional<Long> jobPositionId) {
-        if(jobCategoryId.isPresent() && jobPositionId.isPresent()){
-            return jobRepository.findByJobCategoryIdAndJobPositionId(jobCategoryId.get(), jobPositionId.get());
-        } else if (jobCategoryId.isPresent()) {
-            return jobRepository.findByJobCategoryId(jobCategoryId.get());
-        } else if (jobPositionId.isPresent()) {
-            return jobRepository.findByJobPositionId(jobPositionId.get());
+    public List<JobResponse> getAllJobsBySpecialistId( Optional<Long> specialistId ) {
+        List<Job> jobList;
+        if (specialistId.isPresent()) {
+            jobList = jobRepository.findBySpecialistId(specialistId.get());
         }else
-            return jobRepository.findAll();
+            jobList = jobRepository.findAll();
+        return jobList.stream().map(j -> new JobResponse(j)).collect(Collectors.toList());
     }
 
     public Job createNewJob(JobCreateRequest jobCreateRequest) {
         Specialist specialist = specialistService.getSpecialistById(jobCreateRequest.getSpecialistId());
-        JobCategory jobCategory = jobCategoryService.getJobCategoryById(jobCreateRequest.getJobCategoryId());
-        JobPosition jobPosition = jobPositionService.getJobPositionById(jobCreateRequest.getJobPositionId());
-        if(specialist == null || jobCategory == null || jobPosition == null){
+        if(specialist == null){
             return null;
         }
         Job toSave = new Job();
@@ -71,16 +59,14 @@ public class JobService {
         toSave.setDescription(jobCreateRequest.getDescription());
         toSave.setActivationTime(jobCreateRequest.getActivationTime());
         toSave.setDeactivationTime(jobCreateRequest.getDeactivationTime());
+        toSave.setJobCategory(jobCreateRequest.getJobCategory());
+        toSave.setJobPosition(jobCreateRequest.getJobPosition());
         toSave.setSpecialist(specialist);
-        toSave.setJobCategory(jobCategory);
-        toSave.setJobPosition(jobPosition);
         return jobRepository.save(toSave);
     }
 
     public Job updateJob(Long jobId, JobUpdateRequest jobUpdateRequest) {
         Optional<Job> job = jobRepository.findById(jobId);
-        JobCategory jobCategory = jobCategoryService.getJobCategoryById(jobUpdateRequest.getJobCategoryId());
-        JobPosition jobPosition = jobPositionService.getJobPositionById(jobUpdateRequest.getJobPositionId());
         if (job.isPresent()){
             Job toUpdate = job.get();
             toUpdate.setCode(jobUpdateRequest.getCode());
@@ -89,8 +75,8 @@ public class JobService {
             toUpdate.setDescription(jobUpdateRequest.getDescription());
             toUpdate.setActivationTime(jobUpdateRequest.getActivationTime());
             toUpdate.setDeactivationTime(jobUpdateRequest.getDeactivationTime());
-            toUpdate.setJobCategory(jobCategory);
-            toUpdate.setJobPosition(jobPosition);
+            toUpdate.setJobCategory(jobUpdateRequest.getJobCategoryName());
+            toUpdate.setJobPosition(jobUpdateRequest.getJobPositionName());
             return jobRepository.save(toUpdate);
         }else
             return null;

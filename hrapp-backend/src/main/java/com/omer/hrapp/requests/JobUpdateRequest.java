@@ -12,6 +12,6 @@ public class JobUpdateRequest {
     private String description;
     private LocalDateTime activationTime;
     private LocalDateTime deactivationTime;
-    private Long jobCategoryId;
-    private Long jobPositionId;
+    private String jobCategoryName;
+    private String jobPositionName;
 }
