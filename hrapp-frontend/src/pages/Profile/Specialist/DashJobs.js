@@ -9,6 +9,8 @@ import JobForm from '../../Job/JobForm';
 import { useState } from 'react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DashApplications from './DashApplications';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ListIcon from '@mui/icons-material/List';
 
 const renderRow = (props: ListChildComponentProps) => {
   const { index, style, jobList, handleApplicationButton } = props;
@@ -36,10 +38,10 @@ const renderRow = (props: ListChildComponentProps) => {
     <ListItem style={style} key={index} component="div" disablePadding >
       <ListItemButton>
         <ListItemText primary={`${job.title} | ${job.location} | ${job.code}`} />
-        <Button size="small" variant="contained" color="primary" onClick={() => handleApplicationButton(job.id)} >
+        <Button size="small" variant="contained" color="primary" endIcon={<ListIcon />} onClick={() => handleApplicationButton(job.id)} >
          Applications
         </Button>
-        <Button size="small" variant="outlined" onClick={() => handleDeleteButton(job.id)} sx={{ marginLeft: 2, color: "red", borderColor: 'red'}}>
+        <Button size="small" variant="outlined" endIcon={<DeleteIcon />} onClick={() => handleDeleteButton(job.id)} sx={{ marginLeft: 2, color: "red", borderColor: 'red'}}>
           Delete
         </Button>
       </ListItemButton>
@@ -49,6 +51,7 @@ const renderRow = (props: ListChildComponentProps) => {
 
 const DashJobs = (props) => {
   const { jobList } = props;
+
   const [showCreateJob, setShowCreateJob] = useState(false);
   const [showApplications, setShowApplications] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -67,13 +70,14 @@ const DashJobs = (props) => {
 
   return (
     <Box>
+
       {showApplications ? (
       <Box>
         <DashApplications jobId={selectedJob}/> 
       </Box>
       ) : showCreateJob ? (
         <Box >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingLeft: 27, paddingRight: 27, paddingTop:2, }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingLeft: 24, paddingRight: 24, paddingTop:2, }}>
           <Typography variant="h5" component="h1" sx={{ fontFamily: 'Arial', color: '#333', fontWeight: 'bold' }}>
               New Job
           </Typography>
@@ -86,6 +90,7 @@ const DashJobs = (props) => {
          </Box>
          </Box>
          ) : (
+
       <Box
         sx={{
           display: 'flex',
@@ -98,17 +103,14 @@ const DashJobs = (props) => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', paddingLeft: 24, paddingRight: 24, }}>
 
           <Typography variant="h5" component="h1" sx={{ fontFamily: 'Arial', color: '#333', fontWeight: 'bold' }}>
-              Jobs List
+              Job List
           </Typography>
-          <Button size="small" variant="contained" color="primary" Icon={<AddIcon />} onClick={handleCreateJobClick} sx={{ color: "white", backgroundColor: "green"}}>
+          <Button size="small" variant="contained" color="primary" endIcon={<AddIcon />} onClick={handleCreateJobClick} sx={{ color: "white", backgroundColor: "green"}}>
               Create Job
             </Button> 
-          
       </Box>
       
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: 'background.paper', border: '5px solid #e0e0e0', marginTop: 3}}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: 'background.paper', border: '5px solid #e0e0e0', marginTop: 3}} >
         <FixedSizeList
           height={770}
           width={1200}
@@ -121,6 +123,7 @@ const DashJobs = (props) => {
       </Box> 
       </Box>
       )}
+
     </Box>
   );
 }

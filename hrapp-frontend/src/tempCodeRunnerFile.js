@@ -1,1 +1,1 @@
-/jobs/:id
+/applicants/

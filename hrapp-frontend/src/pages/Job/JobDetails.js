@@ -25,18 +25,19 @@ const JobDetails = () => {
       .then(res => res.json())
       .then(
           (result) => {
-              console.log(result);
               setJob(result);
               if (result.jobApplications && Array.isArray(result.jobApplications)) {
                 setApplicationCount(result.jobApplications.length);
               }
           },
           (error) => {
-              console.log(error)
+              console.log("Error!")
           }
       )
       },[id]
     )
+
+    useEffect(() => { getJob() }, [getJob])
 
     const saveApplication = () => {
       fetch("/applications",
@@ -74,8 +75,6 @@ const JobDetails = () => {
         setApplicationCount(applicationCount+1);
       }
     }
-
-    useEffect(() => { getJob() }, [getJob])
     
     useEffect(() => { checkApplications()}, [job, checkApplications])
 

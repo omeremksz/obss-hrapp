@@ -8,14 +8,17 @@ const SpecialistProfile = (props) => {
     const { specialist } = props;
 
     return(
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-            <Card style={{ width: '770px', height: '125px', justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
+        <Box sx={{flex:5, p:2}}>
+            <Card sx={{ minWidth: 275, mb: 3, mt: 3 }}>
                 <CardContent >
                     <Typography variant="h6" >
                         Name: {specialist.firstName} {specialist.lastName}
                     </Typography>
                     <Typography variant="h6">
                         Mail: {specialist.email}
+                    </Typography>
+                    <Typography variant="h6">
+                        Available Job Openings: {specialist.jobs.length}
                     </Typography>
                 </CardContent>
             </Card>

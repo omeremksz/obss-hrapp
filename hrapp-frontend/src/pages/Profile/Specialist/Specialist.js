@@ -99,12 +99,25 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const Specialist = () => {
   const { id } = useParams();
+
   const [open, setOpen] = useState(false);
   const [activeItem, setActiveItem] = useState('Jobs');
   const [specialist, setSpecialist] = useState(null);
   const [jobList, setJobList] = useState([]);
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  const handleSidebarItemClick = (item) => {
+    setActiveItem(item); 
+  };
 
   const getSpecialist = useCallback(() => {
     fetch("/specialists/"+id ,{  
@@ -128,18 +141,6 @@ const Specialist = () => {
   )
 
   useEffect(() => { getSpecialist() }, [getSpecialist]);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const handleSidebarItemClick = (item) => {
-    setActiveItem(item); 
-  };
 
   return (
     <Box sx={{ display: 'flex' }}>

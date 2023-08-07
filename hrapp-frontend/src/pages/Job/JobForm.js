@@ -56,6 +56,27 @@ const JobForm = () => {
             setIsPosted(false);
         }
 
+        const handleSubmit = () => {
+            saveJob();
+            setIsPosted(true);
+            setTitle("");
+            setJobCategory("");
+            setJobPosition("");
+            setDescription("");
+            setLocation("");
+            setActivationTime(null);
+            setDectivationTime(null);
+            window.location.reload();
+        }
+
+        const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+            if (reason === 'clickaway') {
+              return;
+            }
+        
+            setIsPosted(false);
+          };
+
         const saveJob = () => {
             fetch("/jobs",
             {
@@ -80,27 +101,6 @@ const JobForm = () => {
             .then((res) => res.json())
             .catch((err) => console.log("Error!"))
         }
-
-        const handleSubmit = () => {
-            saveJob();
-            setIsPosted(true);
-            setTitle("");
-            setJobCategory("");
-            setJobPosition("");
-            setDescription("");
-            setLocation("");
-            setActivationTime(null);
-            setDectivationTime(null);
-            window.location.reload();
-        }
-
-        const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-            if (reason === 'clickaway') {
-              return;
-            }
-        
-            setIsPosted(false);
-          };
         
         return (
             <Box sx={{ width: '76%', }}>

@@ -22,10 +22,13 @@ public class ApplicationService {
     private ApplicantService applicantService;
     private JobService jobService;
 
-    public ApplicationService(ApplicationRepository applicationRepository, ApplicantService applicantService, @Lazy JobService jobService) {
+    private EmailService emailService;
+
+    public ApplicationService(ApplicationRepository applicationRepository, ApplicantService applicantService, @Lazy JobService jobService, EmailService emailService) {
         this.applicationRepository = applicationRepository;
         this.applicantService = applicantService;
         this.jobService = jobService;
+        this.emailService = emailService;
     }
 
     public List<ApplicationResponse> gelAllApplications(Optional<Long> applicantId, Optional<Long> jobId) {
@@ -53,7 +56,7 @@ public class ApplicationService {
         }
         Application toSave = new Application();
         toSave.setAppliedDate(LocalDateTime.now());
-        toSave.setApplicationStatus("");
+        toSave.setApplicationStatus("Processing");
         toSave.setLastUpdateTime(LocalDateTime.now());
         toSave.setApplicant(applicant);
         toSave.setJob(job);
@@ -64,8 +67,15 @@ public class ApplicationService {
         Optional<Application> application = applicationRepository.findById(applicationId);
         if(application.isPresent()){
             Application toUpdate = application.get();
-            toUpdate.setApplicationStatus(updateApplicationRequest.getApplicationStatus());
+            String applicantName = toUpdate.getApplicant().getFirstName() + " " + toUpdate.getApplicant().getLastName();
+            String jobTitle = toUpdate.getJob().getTitle();
+            String specialistName = toUpdate.getJob().getSpecialist().getFirstName() + " " + toUpdate.getJob().getSpecialist().getLastName();
+            String toEmail = toUpdate.getApplicant().getEmail();
+            String applicationStatus = updateApplicationRequest.getApplicationStatus();
+
+            toUpdate.setApplicationStatus(applicationStatus);
             toUpdate.setLastUpdateTime(updateApplicationRequest.getLastUpdateTime());
+            emailService.sendEmail(toEmail, applicationStatus, applicantName, jobTitle, specialistName);
             return applicationRepository.save(toUpdate);
         }else
             return null;
