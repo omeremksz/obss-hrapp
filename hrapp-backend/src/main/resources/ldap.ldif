@@ -54,6 +54,16 @@ sn: Emeksiz
 uid: omer
 userPassword: omer6637
 
+dn: uid=oguzhan,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Oguzhan Ozcelik
+sn: Ozcelik
+uid: oguzhan
+userPassword: oguzhan51
+
 dn: uid=bob,ou=people,dc=springframework,dc=org
 objectclass: top
 objectclass: person

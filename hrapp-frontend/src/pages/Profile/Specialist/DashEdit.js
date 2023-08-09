@@ -14,6 +14,7 @@ const DashEdit = (props) => {
     const [expanded, setExpanded] = useState(false);
     const [explanation, setExplanation] = useState("");
     const [isUpdated, setIsUpdated] = useState(false);
+    const [isAdded, setIsAdded] = useState(false);
     const [status, setStatus] = useState(application.applicationStatus);
 
     const formattedAppliedDate = new Date(application.appliedDate).toLocaleString();
@@ -52,6 +53,7 @@ const DashEdit = (props) => {
 
     const  handleAddButton = () => {
         addBlacklist();
+        setIsAdded(true);
         setExplanation("");
     }
 
@@ -69,8 +71,9 @@ const DashEdit = (props) => {
         if (reason === 'clickaway') {
           return;
         }
-    
+
         setIsUpdated(false);
+        setIsAdded(false);
     };
     
   return (
@@ -78,6 +81,11 @@ const DashEdit = (props) => {
         <Snackbar open={isUpdated} autoHideDuration={1800} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
             <Alert onClose={handleClose} severity="success" sx={{ width: '100%'}}>
                 Application status changed successfully!
+            </Alert>
+        </Snackbar>
+        <Snackbar open={isAdded} autoHideDuration={1800} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+            <Alert onClose={handleClose} severity="success" sx={{ width: '100%'}}>
+                Applicant added to blacklist successfully!
             </Alert>
         </Snackbar>
         <Box display="flex" justifyContent="flex-end" alignItems="flex-end" >
