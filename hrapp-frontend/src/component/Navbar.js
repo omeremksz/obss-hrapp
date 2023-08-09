@@ -163,7 +163,7 @@ function Navbar() {
                 <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/auth">Specialist Log In</Link></Typography>
               </MenuItem>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/linkedin">Applicant Log In</Link></Typography>
+                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/applicants/' + localStorage.getItem("currentUser")}}>Applicant Log In</Link></Typography>
               </MenuItem> 
               </Box>
               ) :(

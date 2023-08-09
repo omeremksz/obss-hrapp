@@ -1,5 +1,6 @@
 package com.omer.hrapp.configurations;
 
+import com.omer.hrapp.security.JwtAuthenticationEntryPoint;
 import com.omer.hrapp.security.JwtRequestFilter;
 import com.omer.hrapp.security.JwtTokenProvider;
 import com.omer.hrapp.security.LdapAuthProvider;
@@ -29,9 +30,13 @@ public class SecurityConfiguration {
 
     private JwtRequestFilter jwtRequestFilter;
 
-    public SecurityConfiguration(Environment environment, @Lazy JwtRequestFilter jwtRequestFilter) {
+    private JwtAuthenticationEntryPoint handler;
+
+
+    public SecurityConfiguration(Environment environment, @Lazy JwtRequestFilter jwtRequestFilter, JwtAuthenticationEntryPoint handler ) {
         this.environment = environment;
         this.jwtRequestFilter = jwtRequestFilter;
+        this.handler = handler;
     }
 
     @Bean
@@ -71,17 +76,20 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeRequests()
+                .requestMatchers(HttpMethod.GET, "/jobs")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, "/jobs/*")
+                .permitAll()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/jobs").permitAll()
-                .requestMatchers(HttpMethod.GET, "/jobs/*").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .csrf(csrf -> csrf.disable())
+                .exceptionHandling().authenticationEntryPoint(handler).and()
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults());
 
-        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);;
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 }

@@ -52,7 +52,6 @@ public class JobService {
             return null;
         }
         Job toSave = new Job();
-        toSave.setId(jobCreateRequest.getId());
         toSave.setCode(jobCreateRequest.getCode());
         toSave.setTitle(jobCreateRequest.getTitle());
         toSave.setLocation(jobCreateRequest.getLocation());
@@ -65,7 +64,7 @@ public class JobService {
         return jobRepository.save(toSave);
     }
 
-    public Job updateJob(Long jobId, JobUpdateRequest jobUpdateRequest) {
+    public Job updateJobById(Long jobId, JobUpdateRequest jobUpdateRequest) {
         Optional<Job> job = jobRepository.findById(jobId);
         if (job.isPresent()){
             Job toUpdate = job.get();

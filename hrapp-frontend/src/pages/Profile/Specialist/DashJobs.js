@@ -11,18 +11,13 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import DashApplications from './DashApplications';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ListIcon from '@mui/icons-material/List';
+import { DeleteWithAuth } from '../../../services/HttpService';
 
 const renderRow = (props: ListChildComponentProps) => {
   const { index, style, jobList, handleApplicationButton } = props;
 
   const deleteJob = (jobId) => {
-      fetch("/jobs/"+jobId,  {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization" : localStorage.getItem("tokenKey"),
-      },
-    })
+    DeleteWithAuth("/jobs/"+jobId)
     .then(() => {
       window.location.reload();
     })
@@ -50,7 +45,7 @@ const renderRow = (props: ListChildComponentProps) => {
 }
 
 const DashJobs = (props) => {
-  const { jobList } = props;
+  const { jobList, specialist } = props;
 
   const [showCreateJob, setShowCreateJob] = useState(false);
   const [showApplications, setShowApplications] = useState(false);
@@ -73,7 +68,7 @@ const DashJobs = (props) => {
 
       {showApplications ? (
       <Box>
-        <DashApplications jobId={selectedJob}/> 
+        <DashApplications jobId={selectedJob} specialist={specialist} /> 
       </Box>
       ) : showCreateJob ? (
         <Box >

@@ -49,7 +49,7 @@ public class LdapAuthProvider implements AuthenticationProvider {
         Boolean authenticate = ldapTemplate.authenticate(LdapUtils.emptyLdapName(), filter.encode(), authentication.getCredentials().toString());
         if(authenticate){
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-            grantedAuthorities.add(new SimpleGrantedAuthority("SPECIALIST"));
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SPECIALIST"));
             UserDetails userDetails = new User(authentication.getName(), authentication.getCredentials().toString(), grantedAuthorities );
             Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials().toString(), grantedAuthorities);
             return auth;

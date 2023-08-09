@@ -1,1 +1,1 @@
-/applicants/
+/applicants/:id'

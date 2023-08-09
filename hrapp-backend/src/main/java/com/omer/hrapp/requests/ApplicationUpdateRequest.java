@@ -7,5 +7,4 @@ import java.time.LocalDateTime;
 @Data
 public class ApplicationUpdateRequest {
     private String applicationStatus;
-    private LocalDateTime lastUpdateTime;
 }

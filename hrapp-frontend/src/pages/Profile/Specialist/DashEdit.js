@@ -6,9 +6,10 @@ import NativeSelect from '@mui/material/NativeSelect';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse'; 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { PostWithAuth, PutWithAuth } from '../../../services/HttpService';
 
 const DashEdit = (props) => {
-    const {applicant, application} = props;
+    const {applicant, application, specialist} = props;
 
     const [expanded, setExpanded] = useState(false);
     const [explanation, setExplanation] = useState("");
@@ -19,18 +20,18 @@ const DashEdit = (props) => {
     const formattedLastUpdateTime = new Date(application.lastUpdateTime).toLocaleString();
 
     const updateApplication = () => {
-        fetch("/applications/"+application.id,
-        {
-            method: "PUT",
-            headers: 
-            {
-                "Content-Type": "application/json",
-                "Authorization": localStorage.getItem("tokenKey")
-            },
-            body: JSON.stringify({
-                applicationStatus: status,
-                lastUpdateTime: new Date().toISOString()
-            })
+        PutWithAuth("/applications/"+application.id, {
+            applicationStatus: status,
+        })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error!"))
+    }
+
+    const addBlacklist = () => {
+        PostWithAuth("/blacklists", {
+            explanation: explanation,
+            applicantId: applicant.id,
+            specialistId: specialist.id,
         })
         .then((res) => res.json())
         .catch((err) => console.log("Error!"))
@@ -50,7 +51,8 @@ const DashEdit = (props) => {
     }
 
     const  handleAddButton = () => {
-        
+        addBlacklist();
+        setExplanation("");
     }
 
     const handleBackButton = () => {

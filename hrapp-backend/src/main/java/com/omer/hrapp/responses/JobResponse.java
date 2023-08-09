@@ -18,6 +18,7 @@ public class JobResponse {
     private LocalDateTime deactivationTime;
     private String specialistFirstName;
     private String specialistLastName;
+    private Long specialistId;
     private String jobCategory;
     private String jobPosition;
     private List<ApplicationResponse> jobApplications;
@@ -32,6 +33,7 @@ public class JobResponse {
         this.deactivationTime = entity.getDeactivationTime();
         this.specialistFirstName = entity.getSpecialist().getFirstName();
         this.specialistLastName = entity.getSpecialist().getLastName();
+        this.specialistId = entity.getSpecialist().getId();
         this.jobCategory = entity.getJobCategory();
         this.jobPosition = entity.getJobPosition();
         this.jobApplications = jobApplications;
@@ -47,6 +49,7 @@ public class JobResponse {
         this.deactivationTime = entity.getDeactivationTime();
         this.specialistFirstName = entity.getSpecialist().getFirstName();
         this.specialistLastName = entity.getSpecialist().getLastName();
+        this.specialistId = entity.getSpecialist().getId();
         this.jobCategory = entity.getJobCategory();
         this.jobPosition = entity.getJobPosition();
     }

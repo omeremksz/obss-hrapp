@@ -4,7 +4,7 @@ import Navbar from '../../component/Navbar'
 import { LockClockOutlined } from '@mui/icons-material'
 import Footer from '../../component/Footer'
 import { useNavigate } from 'react-router-dom';
-
+import { PostWithoutAuth } from '../../services/HttpService'
 
 const Auth = () => {
 
@@ -27,25 +27,14 @@ const Auth = () => {
     }
 
     const sendRequest = () => {
-        fetch("/auth",
-        {
-            method: "POST",
-            headers: 
-            {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                userName : userName,
-                password: password,
-            })
+        PostWithoutAuth("/auth", {
+            userName : userName,
+            password: password,
         })
         .then((res) => res.json())
         .then((result) => {
-                        console.log("token:", result.message);
                         localStorage.setItem("tokenKey", result.message);
-                        console.log("user id:", result.id);
                         localStorage.setItem("currentUser", result.id);
-                        console.log("username:", userName);
                         localStorage.setItem("userName", userName);
                         navigate("/");
                     })

@@ -36,8 +36,8 @@ public class JobController {
     }
 
     @PutMapping("/{jobId}")
-    public Job updateJob(@PathVariable Long jobId, @RequestBody JobUpdateRequest jobUpdateRequest){
-        return jobService.updateJob(jobId, jobUpdateRequest);
+    public Job updateJobById(@PathVariable Long jobId, @RequestBody JobUpdateRequest jobUpdateRequest){
+        return jobService.updateJobById(jobId, jobUpdateRequest);
     }
 
     @DeleteMapping("/{jobId}")

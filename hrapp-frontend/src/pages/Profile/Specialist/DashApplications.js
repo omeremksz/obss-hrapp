@@ -4,6 +4,7 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DashEdit from './DashEdit';
 import EditIcon from '@mui/icons-material/Edit';
+import { GetWithAuth } from '../../../services/HttpService';
 
 const RenderRow = (props: ListChildComponentProps) => {
     const { index, style, applicationList, handleEditButton } = props;
@@ -13,11 +14,7 @@ const RenderRow = (props: ListChildComponentProps) => {
     const [applicant, setApplicant] = useState(null);
   
     const getApplicant = useCallback(() => {
-      fetch("/applicants/"+applicantId ,{  
-        headers: {
-          "Authorization": localStorage.getItem("tokenKey"),
-        },
-      })
+      GetWithAuth("/applicants/"+applicantId)
       .then(res => res.json())
       .then(
         (result) => {
@@ -38,7 +35,7 @@ const RenderRow = (props: ListChildComponentProps) => {
         <ListItemButton >
         {applicant ? (
             <>
-              <ListItemText primary={`${applicant.firstName} | ${applicant.lastName} | ${applicant.email}`} />
+              <ListItemText primary={`${applicant.firstName} ${applicant.lastName} | ${applicant.email}`} />
               <Button size="small" variant="contained" color="primary" endIcon={<EditIcon />} onClick={() => handleEditButton(applicant, application)} sx={{ backgroundColor: '#1976D2', color: '#FFFFFF' }} >
                 Edit
               </Button>
@@ -53,7 +50,7 @@ const RenderRow = (props: ListChildComponentProps) => {
   
 
 const DashApplications = (props) => {
-    const { jobId } = props;
+    const { jobId, specialist } = props;
 
     const [applicationList, setApplicationList] = useState([]);
     const [editMode, setEditMode] = useState(false);
@@ -93,7 +90,7 @@ const DashApplications = (props) => {
 
       {editMode ? (
         <Box>
-          <DashEdit applicant = {selectedApplicant} application = {selectedApplication}/>
+          <DashEdit applicant = {selectedApplicant} application = {selectedApplication} specialist = {specialist}/>
         </Box>
       ) : (
         <Box

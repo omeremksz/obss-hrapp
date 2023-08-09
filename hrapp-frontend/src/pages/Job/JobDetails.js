@@ -11,14 +11,16 @@ import { useCallback } from 'react';
 import Navbar from '../../component/Navbar';
 import Footer from '../../component/Footer';
 import Header from '../../component/Header';
-
+import { GetWithAuth, PostWithAuth } from '../../services/HttpService';
 
 const JobDetails = () => {
     const { id } = useParams();
     const [job, setJob] = useState(null);
     const [isApplied, setIsApplied] = useState(false);
-    const [applicationCount, setApplicationCount] = useState(0);
+    const [inBlacklist, setInBlacklist] = useState(false);
     const isAuthorized = localStorage.getItem("currentUser") == null ? false : true;
+    const [applicationCount, setApplicationCount] = useState(0);
+    const [blacklist, setBlacklist] = useState([]);
 
     const getJob = useCallback(() => {
       fetch("/jobs/"+id)
@@ -39,22 +41,40 @@ const JobDetails = () => {
 
     useEffect(() => { getJob() }, [getJob])
 
-    const saveApplication = () => {
-      fetch("/applications",
-      {
-          method: "POST",
-          headers: 
-          {
-              "Content-Type": "application/json",
-              "Authorization": localStorage.getItem("tokenKey"),
+    const getBlacklist = useCallback(() => {
+      if (job && job.specialistId) {
+      GetWithAuth(`/blacklists?specialistId=${job.specialistId}`)
+      .then(res => res.json())
+      .then(
+          (result) => {
+              setBlacklist(result)
           },
-          body: JSON.stringify({
-              applicantId: localStorage.getItem("currentUser"),
-              jobId: id,
-          })
-      })
+          (error) => {
+              console.log("Error!")
+          }
+      );
+        }
+    }, [job])
+
+    useEffect(() => { getBlacklist() }, [getBlacklist])
+
+    const checkBlacklist = useCallback(() => {
+      if(blacklist) {
+      const blacklistControl = blacklist.find(blacklistEntity => ""+blacklistEntity.applicantId === localStorage.getItem("currentUser"));
+      if (blacklistControl != null) {
+          setInBlacklist(true);
+      }}
+    }, [blacklist]);
+  
+    useEffect(() => { checkBlacklist()}, [checkBlacklist]);
+
+    const saveApplication = () => {
+      PostWithAuth("/applications", {
+        applicantId: localStorage.getItem("currentUser"),
+        jobId: id,
+    })
       .then((res) => res.json())
-      .catch((err) => console.log("Error!"))
+      .catch((err) => console.log(err))
   }
 
   const checkApplications = useCallback(() => {
@@ -68,16 +88,16 @@ const JobDetails = () => {
     }
   }, [job]);
 
-    const handleSubmit = () => {
-      if(!isApplied){
-        setIsApplied(true);
-        saveApplication();
-        setApplicationCount(applicationCount+1);
-      }
-    }
-    
-    useEffect(() => { checkApplications()}, [job, checkApplications])
+  useEffect(() => { checkApplications()}, [ checkApplications])
 
+  const handleSubmit = () => {
+    if(!isApplied){
+      setIsApplied(true);
+      saveApplication();
+      setApplicationCount(applicationCount+1);
+    }
+  }
+    
     return(
       <>
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -121,11 +141,11 @@ const JobDetails = () => {
                         </CardContent>
                         <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
                           <CardActions>
-                            <Button variant="contained" size="small" onClick={handleSubmit} disabled={isApplied || !isAuthorized}>Apply</Button>
+                            <Button variant="contained" size="small" onClick={handleSubmit} disabled={isApplied || !isAuthorized || inBlacklist }>Apply</Button>
                             </CardActions>
                         </Box>
                       </>
-                      ) : (<div>Loading...</div>)
+                      ) : (<Box>Loading...</Box>)
                     }
                   </Card>
                 </Box>

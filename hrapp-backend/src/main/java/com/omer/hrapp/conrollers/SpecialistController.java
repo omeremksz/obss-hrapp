@@ -34,8 +34,8 @@ public class SpecialistController {
     }
 
     @PutMapping("/{specialistId}")
-    public Specialist updateSpecialist(@PathVariable Long specialistId, @RequestBody SpecialistUpdateRequest specialistUpdateRequest){
-        return specialistService.updateSpecialist(specialistId, specialistUpdateRequest);
+    public Specialist updateSpecialistById(@PathVariable Long specialistId, @RequestBody SpecialistUpdateRequest specialistUpdateRequest){
+        return specialistService.updateSpecialistById(specialistId, specialistUpdateRequest);
     }
 
     @DeleteMapping("/{specialistId}")

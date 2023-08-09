@@ -25,6 +25,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useCallback } from 'react';
 import { useEffect } from 'react';
 import SpecialistProfile from './SpecialistProfile';
+import { GetWithAuth } from '../../../services/HttpService';
+import DashBlacklist from './DashBlacklist';
 
 const drawerWidth = 240;
 
@@ -120,11 +122,7 @@ const Specialist = () => {
   };
 
   const getSpecialist = useCallback(() => {
-    fetch("/specialists/"+id ,{  
-      headers: {
-              "Authorization": localStorage.getItem("tokenKey"),
-          },
-        })
+    GetWithAuth("/specialists/"+id)
     .then(res => res.json())
     .then(
         (result) => {
@@ -143,71 +141,81 @@ const Specialist = () => {
   useEffect(() => { getSpecialist() }, [getSpecialist]);
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            HR Specialist Dashboard
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <List>
-          {['Profile', 'Jobs', 'Blacklist', 'Home'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                onClick={() => handleSidebarItemClick(text)}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
+    <Box>
+      {localStorage.getItem("currentUser") === id ? (
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              HR Specialist Dashboard
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <List>
+            {['Profile', 'Jobs', 'Blacklist', 'Home'].map((text, index) => (
+              <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  onClick={() => handleSidebarItemClick(text)}
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
                   }}
                 >
-                  {index === 0 ? <AccountBoxIcon /> : index === 1 ? <WorkIcon /> : index === 2 ? <BlockIcon /> : <HomeIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {index === 0 ? <AccountBoxIcon /> : index === 1 ? <WorkIcon /> : index === 2 ? <BlockIcon /> : <HomeIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
 
-        <Box >
-            {activeItem === 'Profile'? ( <SpecialistProfile specialist = {specialist}/> ) :
-            activeItem === 'Jobs'? ( <DashJobs jobList = {jobList}/> ) :
-            activeItem === 'Home'?  (navigate("/")): 
-            null
-            }
+          <Box >
+              {activeItem === 'Profile'? ( <SpecialistProfile specialist = {specialist}/> ) :
+              activeItem === 'Jobs'? ( <DashJobs jobList = {jobList} specialist = {specialist}/> ) :
+              activeItem === 'Blacklist'? ( <DashBlacklist specialist = {specialist}/> ) :
+              activeItem === 'Home'?  (navigate("/")): 
+              null
+              }
+          </Box>
+
         </Box>
-
-      </Box>
+      </Box> 
+      ): specialist ? (
+      <SpecialistProfile specialist = {specialist}/>) : (
+        <Typography variant="h6" component="div">
+          Specialist not found!
+        </Typography>
+      )}
     </Box>
   );
 }

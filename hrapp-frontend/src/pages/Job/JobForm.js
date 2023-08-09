@@ -10,6 +10,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { PostWithAuth } from '../../services/HttpService';
 
 const generateRandomCode = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz01234567890123456789';
@@ -78,28 +79,19 @@ const JobForm = () => {
           };
 
         const saveJob = () => {
-            fetch("/jobs",
-            {
-                method: "POST",
-                headers: 
-                {
-                    "Content-Type": "application/json",
-                    "Authorization": localStorage.getItem("tokenKey")
-                },
-                body: JSON.stringify({
-                    code: code,
-                    title: title,
-                    description: description,
-                    location: location,
-                    activationTime: activationTime,
-                    deactivationTime: deactivationTime,
-                    jobCategory: jobCategory,
-                    jobPosition: jobPosition,
-                    specialistId: specialistId,
-                })
+            PostWithAuth("/jobs", {
+                code: code,
+                title: title,
+                description: description,
+                location: location,
+                activationTime: activationTime,
+                deactivationTime: deactivationTime,
+                jobCategory: jobCategory,
+                jobPosition: jobPosition,
+                specialistId: specialistId,
             })
             .then((res) => res.json())
-            .catch((err) => console.log("Error!"))
+            .catch((err) => console.log(err))
         }
         
         return (
@@ -125,7 +117,7 @@ const JobForm = () => {
                             {<OutlinedInput 
                                 multiline
                                 placeholder='Job Category'
-                                inputProps={{maxLength:25}}
+                                inputProps={{maxLength:50}}
                                 fullWidth
                                 value={jobCategory}
                                 onChange={ (i) => handleJobCategory(i.target.value)}
@@ -135,7 +127,7 @@ const JobForm = () => {
                             {<OutlinedInput 
                                 multiline
                                 placeholder='Job Position'
-                                inputProps={{maxLength:25}}
+                                inputProps={{maxLength:50}}
                                 fullWidth
                                 value={jobPosition}
                                 onChange={ (i) => handleJobPosition(i.target.value)}

@@ -4,7 +4,9 @@ import lombok.Data;
 
 @Data
 public class SpecialistUpdateRequest {
-    private String first_name;
-    private String last_name;
+    private String userName;
+    private String password;
+    private String firstName;
+    private String lastName;
     private String email;
 }

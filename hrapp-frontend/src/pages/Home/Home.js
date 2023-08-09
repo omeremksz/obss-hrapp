@@ -29,7 +29,7 @@ const Home = () => {
 
   useEffect(() => {
     refreshJobs();
-  },[jobList])
+  },[])
 
   if (error) {
       return <Box> Error! </Box>;

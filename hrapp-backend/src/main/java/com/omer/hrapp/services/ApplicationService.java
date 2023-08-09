@@ -10,6 +10,7 @@ import com.omer.hrapp.responses.ApplicationResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +75,8 @@ public class ApplicationService {
             String applicationStatus = updateApplicationRequest.getApplicationStatus();
 
             toUpdate.setApplicationStatus(applicationStatus);
-            toUpdate.setLastUpdateTime(updateApplicationRequest.getLastUpdateTime());
+            toUpdate.setLastUpdateTime(LocalDateTime.now());
+
             emailService.sendEmail(toEmail, applicationStatus, applicantName, jobTitle, specialistName);
             return applicationRepository.save(toUpdate);
         }else
@@ -84,4 +86,14 @@ public class ApplicationService {
     public void deleteApplicationById(Long applicationId) {
         applicationRepository.deleteById(applicationId);
     }
+
+    public void deleteApplicationsByBlacklist(Long applicantId, Long specialistId) {
+        List<Application> blacklistApplications = applicationRepository.findByApplicantId(applicantId);
+        for (Application application :blacklistApplications) {
+            if(application.getJob().getSpecialist().getId().equals(specialistId)) {
+                applicationRepository.delete(application);
+            }
+        }
+    }
+
 }
