@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { GetWithAuth } from '../../../services/HttpService';
+import { DeleteWithAuth, GetWithAuth } from '../../../services/HttpService';
 import { Box, Button, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { FixedSizeList } from 'react-window';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -11,6 +11,13 @@ const RenderRow = (props: ListChildComponentProps) => {
     const blacklistEntity = blacklist[index];
     const applicantId = blacklistEntity.applicantId;
     const [applicant, setApplicant] = useState(null); 
+
+    const deleteBlacklistEntity = (blacklistEntityId) => {
+      DeleteWithAuth("/blacklists/"+blacklistEntityId)
+      .then(() => {
+        window.location.reload();
+      })
+    }
 
     const getApplicant = useCallback(() => {
         GetWithAuth("/applicants/"+applicantId)
@@ -29,7 +36,8 @@ const RenderRow = (props: ListChildComponentProps) => {
         getApplicant();
       }, [getApplicant]);
     
-      const handleDeleteButton = () => {
+      const handleDeleteButton = (blacklistEntityId) => {
+        deleteBlacklistEntity(blacklistEntityId);
     }
 
     const formattedBlacklistedAt = moment(blacklistEntity.blacklistedAt).format('YYYY-MM-DD HH:mm:ss');;
@@ -40,7 +48,7 @@ const RenderRow = (props: ListChildComponentProps) => {
         {applicant ? (
             <>
             <ListItemText primary={`Applicant Name: ${applicant.firstName} ${applicant.lastName} | Blacklisted at: ${formattedBlacklistedAt} | Explanation: ${blacklistEntity.explanation}`} />
-            <Button size="small" variant="outlined" endIcon={<DeleteIcon />} onClick={() => handleDeleteButton()} sx={{ marginLeft: 2, color: "red", borderColor: 'red'}}>
+            <Button size="small" variant="outlined" endIcon={<DeleteIcon />} onClick={() => handleDeleteButton(blacklistEntity.id)} sx={{ marginLeft: 2, color: "red", borderColor: 'red'}}>
                 Delete
             </Button>
           </>
