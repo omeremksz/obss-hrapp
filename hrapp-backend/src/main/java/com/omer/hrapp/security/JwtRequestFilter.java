@@ -34,16 +34,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String requestTokenHeader = request.getHeader("authorization");
 
-        String username = null;
+        String userName = null;
         String jwtToken = null;
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("SPECIALIST"));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SPECIALIST"));
 
         if( requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
-                username = jwtTokenProvider.getUsernameFromToken(jwtToken);
+                userName = jwtTokenProvider.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
@@ -53,8 +53,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Specialist userDetails = this.specialistRepository.findByUserName(username);
+        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            Specialist userDetails = this.specialistRepository.findByUserName(userName);
             try {
                 if (jwtTokenProvider.validateToken(jwtToken, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =

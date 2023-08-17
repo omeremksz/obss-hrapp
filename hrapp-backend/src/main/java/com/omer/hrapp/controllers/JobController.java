@@ -1,4 +1,4 @@
-package com.omer.hrapp.conrollers;
+package com.omer.hrapp.controllers;
 
 import com.omer.hrapp.entities.Job;
 import com.omer.hrapp.requests.JobCreateRequest;

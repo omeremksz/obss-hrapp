@@ -1,11 +1,10 @@
-package com.omer.hrapp.conrollers;
+package com.omer.hrapp.controllers;
 
 import com.omer.hrapp.entities.Applicant;
 import com.omer.hrapp.services.ApplicantService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/applicants")

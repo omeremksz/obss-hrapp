@@ -17,7 +17,7 @@ public class Applicant {
 
     private String lastName;
 
-    private String password;
+    private String profilePhotoUrl;
 
     private String email;
 

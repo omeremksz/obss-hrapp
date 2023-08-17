@@ -1,6 +1,5 @@
 package com.omer.hrapp.security;
 
-import org.springframework.core.env.Environment;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -21,16 +20,8 @@ import java.util.List;
 
 @Component
 public class LdapAuthProvider implements AuthenticationProvider {
-
-    private Environment environment;
-
     private LdapContextSource contextSource;
-
     private LdapTemplate ldapTemplate;
-
-    public LdapAuthProvider(Environment environment) {
-        this.environment = environment;
-    }
 
     private void initContext() {
         contextSource = new LdapContextSource();

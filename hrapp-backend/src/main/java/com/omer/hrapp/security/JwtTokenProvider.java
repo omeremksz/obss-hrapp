@@ -26,7 +26,7 @@ public class JwtTokenProvider {
                     .setSubject(userName)
                     .setId(UUID.randomUUID().toString())
                     .setIssuedAt(Date.from(now))
-                    .setExpiration(Date.from(now.plus(51, ChronoUnit.MINUTES)))
+                    .setExpiration(Date.from(now.plus(60, ChronoUnit.MINUTES)))
                     .signWith(SignatureAlgorithm.RS512, getPrivateKey())
                     .compact();
             return jwtToken;

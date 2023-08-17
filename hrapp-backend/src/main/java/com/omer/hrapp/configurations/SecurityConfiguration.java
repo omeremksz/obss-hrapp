@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -19,22 +18,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private Environment environment;
 
+    private LdapAuthProvider ldapAuthProvider;
     private JwtRequestFilter jwtRequestFilter;
-
     private JwtAuthenticationEntryPoint handler;
 
 
-    public SecurityConfiguration(Environment environment, @Lazy JwtRequestFilter jwtRequestFilter, JwtAuthenticationEntryPoint handler ) {
-        this.environment = environment;
+    public SecurityConfiguration(LdapAuthProvider ldapAuthProvider, @Lazy JwtRequestFilter jwtRequestFilter, JwtAuthenticationEntryPoint handler ) {
+        this.ldapAuthProvider = ldapAuthProvider;
         this.jwtRequestFilter = jwtRequestFilter;
         this.handler = handler;
     }
@@ -51,36 +46,15 @@ public class SecurityConfiguration {
 
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new LdapAuthProvider(environment)).eraseCredentials(false);
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("OPTIONS");
-        config.addAllowedMethod("HEAD");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("PATCH");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        auth.authenticationProvider(ldapAuthProvider);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeRequests()
-                .requestMatchers(HttpMethod.GET, "/jobs")
+                .requestMatchers(HttpMethod.GET, "/jobs", "/jobs/*", "/auth/**")
                 .permitAll()
-                .requestMatchers(HttpMethod.GET, "/jobs/*")
-                .permitAll()
-                .requestMatchers("/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -92,4 +66,5 @@ public class SecurityConfiguration {
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
+
 }

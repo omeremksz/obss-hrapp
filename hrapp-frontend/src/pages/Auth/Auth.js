@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../../component/Navbar'
 import { LockClockOutlined } from '@mui/icons-material'
 import Footer from '../../component/Footer'
@@ -11,6 +11,18 @@ const Auth = () => {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const linkedInLogin = "https://www.linkedin.com/oauth/v2/authorization?"+
+    "response_type=code&client_id=86yev8xbgl6hqk" +
+    "&redirect_uri=http://localhost:8080" +
+    "&state=ASk220aSFAxx&scope=openid%20profile%20email"
+
+    const isInAuthentication = () => {
+        const url = window.location.search;
+        if(url && url.split("?")) {
+            return url.split("?")[1].substr(0,4) === "code";
+        }
+        return false;
+    }
 
     const handleUserName = (value) => {
         setUserName(value);
@@ -20,14 +32,39 @@ const Auth = () => {
         setPassword(value);
     }
 
-    const handleLogin = (path) => {
-        sendRequest(path);
-        setUserName("");
-        setPassword("");
+    const handleSpecialistLogin = () => {
+        sendSpecialistRequest();
+        if(localStorage.getItem("currentUser")!== null) {
+            setUserName("");
+            setPassword("");
+        }
     }
 
-    const sendRequest = () => {
-        PostWithoutAuth("/auth", {
+    useEffect(() => {
+
+        if (isInAuthentication()) {
+            const url = window.location.search;
+            const split = url.split('?code=')[1];
+            const code = split.split('&state')[0];
+
+            const sendApplicantRequest = (code) => {
+                PostWithoutAuth("/auth/applicant?code="+code)
+                .then((res) => res.json())
+                .then((result) => {
+                                localStorage.setItem("tokenKey", result.message);
+                                localStorage.setItem("currentUser", result.id);
+                                localStorage.setItem("userName", userName);
+                                navigate("/");
+                            })
+                .catch((err) => console.log(err))
+            }
+        
+            sendApplicantRequest(code);
+        }
+      }, [navigate, userName]);
+
+    const sendSpecialistRequest = (path) => {
+        PostWithoutAuth("/auth/specialist", {
             userName : userName,
             password: password,
         })
@@ -75,7 +112,10 @@ const Auth = () => {
                             placeholder="Password"
                             onChange={(i) => handlePassword(i.target.value)}
                         />
-                        <Button fullWidth variant="contained" onClick={() => handleLogin()}>Log In</Button>
+                        <Button fullWidth variant="contained" onClick={() => handleSpecialistLogin()} sx={{ mb: 3 }}>Log In</Button>
+                        <Button fullWidth variant="contained" > 
+                            <a style={{textDecoration: "none", color:"white"}} href={linkedInLogin} class="redirect">Log In with LinkedIn</a>
+                        </Button>
                     </Box>
                 </Box>
             </Box>

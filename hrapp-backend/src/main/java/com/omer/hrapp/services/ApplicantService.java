@@ -23,6 +23,10 @@ public class ApplicantService {
         return applicantRepository.findById(applicantId).orElse(null);
     }
 
+    public Optional<Applicant> getApplicantByEmail(String email) {
+        return applicantRepository.findByEmail(email);
+    }
+
     public Applicant createNewApplicant(Applicant newApplicant) {
         return applicantRepository.save(newApplicant);
     }
