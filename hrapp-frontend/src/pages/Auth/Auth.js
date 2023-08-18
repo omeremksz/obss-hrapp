@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, TextField } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Navbar from '../../component/Navbar'
 import { LockClockOutlined } from '@mui/icons-material'
 import Footer from '../../component/Footer'
@@ -13,7 +13,7 @@ const Auth = () => {
     const navigate = useNavigate();
     const linkedInLogin = "https://www.linkedin.com/oauth/v2/authorization?"+
     "response_type=code&client_id=77oimdom7ofswl" +
-    "&redirect_uri=http://localhost:8080" +
+    "&redirect_uri=http://localhost:3000/" +
     "&state=ASk220aSFAxx&scope=openid%20profile%20email"
 
     const handleUserName = (value) => {
@@ -31,37 +31,6 @@ const Auth = () => {
             setPassword("");
         }
     }
-
-    const isInAuthentication = () => {
-        const url = window.location.search;
-        if(url && url.split("?")) {
-            return url.split("?")[1].substr(0,4) === "code";
-        }
-        return false;
-    }
-
-    useEffect(() => {
-
-        if (isInAuthentication()) {
-            const url = window.location.search;
-            const split = url.split('?code=')[1];
-            const code = split.split('&state')[0];
-
-            const sendApplicantRequest = (code) => {
-                PostWithoutAuth("/auth/applicant?code="+code)
-                .then((res) => res.json())
-                .then((result) => {
-                                localStorage.setItem("tokenKey", result.message);
-                                localStorage.setItem("currentUser", result.id);
-                                localStorage.setItem("userName", userName);
-                                navigate("/");
-                            })
-                .catch((err) => console.log(err))
-            }
-        
-            sendApplicantRequest(code);
-        }
-      }, [navigate, userName]);
 
     const sendSpecialistRequest = () => {
         PostWithoutAuth("/auth/specialist", {

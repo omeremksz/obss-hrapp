@@ -3,7 +3,7 @@ package com.omer.hrapp.requests;
 import lombok.Data;
 
 @Data
-public class AuthRequest {
+public class SpecialistAuthRequest {
 
     String userName;
     String password;
