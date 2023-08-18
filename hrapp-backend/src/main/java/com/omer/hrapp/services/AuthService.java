@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class AuthService {
@@ -28,8 +30,8 @@ public class AuthService {
     private static final String IMAGE_ENDPOINT = "https://api.linkedin.com/v2/me?projection=" +
             "(id,profilePicture(displayImage~:playableStreams))&oauth2_access_token=";
     private static final String EMAIL_ENDPOINT = "https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))";
-    private static final String CLIENT_ID = "86yev8xbgl6hqk";
-    private static final String CLIENT_SECRET = "0UWBwbotEeoERjK8";
+    private static final String CLIENT_ID = "77oimdom7ofswl";
+    private static final String CLIENT_SECRET = "DJnkdgI2NMrszLkK";
     private static final String REDIRECT_URI = "http://localhost:8080";
     private ApplicantService applicantService;
 
@@ -37,7 +39,7 @@ public class AuthService {
         this.applicantService = applicantService;
     }
 
-    public String exchangeLinkedInToken(String authorizationCode) throws Exception {
+    public Map<Long, String> exchangeLinkedInToken(String authorizationCode) throws Exception {
         String accessTokenUri = "https://www.linkedin.com/oauth/v2/accessToken?grant_type=authorization_code&code="
                 + authorizationCode + "&redirect_uri=" + REDIRECT_URI + "&client_id="
                 + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "";
@@ -53,24 +55,34 @@ public class AuthService {
         if(!isApplicantAlreadySaved(email)) {
             applicant = new Applicant();
 
-            String[] splitted = fullName.split(" ");
-            String firstName = splitted[0];
-            String lastName = splitted[1];
+            String[] split = fullName.split(" ");
+            String firstName = split[0];
+            String lastName = split[1];
 
             applicant.setFirstName(firstName);
             applicant.setLastName(lastName);
             applicant.setEmail(email);
             applicant.setProfilePhotoUrl(profilePhotoUrl);
-
             applicantService.createNewApplicant(applicant);
 
-            String token = JwtTokenProvider.generateToken(firstName);
+            Long applicantId = applicantService.getApplicantByEmail(email).get().getId();
+            String token = JwtTokenProvider.generateToken(email);
+            Map<Long, String> resultMap = new HashMap<>();
+            resultMap.put(applicantId,token);
+
+            return resultMap;
         } else if (applicantService.getApplicantByEmail(email).isPresent()) {
             applicant = applicantService.getApplicantByEmail(email).get();
+
+            Long applicantId = applicant.getId();
+            String token = JwtTokenProvider.generateToken(email);
+            Map<Long, String> resultMap = new HashMap<>();
+            resultMap.put(applicantId,token);
+
+            return resultMap;
         } else {
             throw new NotFoundException();
         }
-
     }
 
     private boolean isApplicantAlreadySaved(String email) {
@@ -122,7 +134,7 @@ public class AuthService {
     }
 
     private String getProfilePhotoUrl(String accessToken) throws IOException {
-        HttpsURLConnection connection = getHttpsURLConnectionWithAccessTokenConcatenized(IMAGE_ENDPOINT, accessToken);
+        HttpsURLConnection connection = getHttpsURLConnectionWithAccessTokenConcatenated(IMAGE_ENDPOINT, accessToken);
 
         StringBuilder jsonString = new StringBuilder();
         BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -147,7 +159,7 @@ public class AuthService {
                 .getString("identifier");
     }
 
-    private HttpsURLConnection getHttpsURLConnectionWithAccessTokenConcatenized(String url, String accessToken) throws IOException {
+    private HttpsURLConnection getHttpsURLConnectionWithAccessTokenConcatenated(String url, String accessToken) throws IOException {
         URL urlWithToken = new URL(url + accessToken);
         return (HttpsURLConnection) urlWithToken.openConnection();
     }
@@ -173,7 +185,7 @@ public class AuthService {
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
         con.setRequestMethod("GET");
-        con.setRequestProperty("Authorization", "Bearer"+accessToken);
+        con.setRequestProperty("Authorization", "Bearer "+accessToken);
         con.setRequestProperty("cache-control", "no-cache");
         con.setRequestProperty("X-Restli-Protocol-Version", "2.0.0");
 

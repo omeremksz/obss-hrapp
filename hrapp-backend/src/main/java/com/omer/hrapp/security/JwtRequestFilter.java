@@ -1,7 +1,10 @@
 package com.omer.hrapp.security;
 
+import com.omer.hrapp.entities.Applicant;
 import com.omer.hrapp.entities.Specialist;
 import com.omer.hrapp.repositories.SpecialistRepository;
+import com.omer.hrapp.services.ApplicantService;
+import com.omer.hrapp.services.SpecialistService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,22 +22,23 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
-    private SpecialistRepository specialistRepository;
-
+    private SpecialistService specialistService;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
+    @Autowired
+    private ApplicantService applicantService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String requestTokenHeader = request.getHeader("authorization");
 
-        String userName = null;
+        String subject = null;
         String jwtToken = null;
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -43,7 +47,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if( requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
-                userName = jwtTokenProvider.getUsernameFromToken(jwtToken);
+                subject = jwtTokenProvider.getSubjectFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
@@ -53,16 +57,30 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
 
-        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Specialist userDetails = this.specialistRepository.findByUserName(userName);
+        if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            Optional<Specialist> specialist = specialistService.getSpecialistByUserName(subject);
+            Optional<Applicant> applicant = applicantService.getApplicantByEmail(subject);
             try {
-                if (jwtTokenProvider.validateToken(jwtToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, grantedAuthorities);
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                if(specialist.isPresent()) {
+                    Specialist specialistUserDetails = specialist.get();
+                    if (jwtTokenProvider.validateToken(jwtToken, specialistUserDetails, null)) {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                                new UsernamePasswordAuthenticationToken(specialistUserDetails, null, grantedAuthorities);
+                        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 
+                    }
+                } else if (applicant.isPresent()) {
+                    Applicant applicantUserDetails = applicant.get();
+                    if (jwtTokenProvider.validateToken(jwtToken, null, applicantUserDetails)) {
+                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                                new UsernamePasswordAuthenticationToken(applicantUserDetails, null, grantedAuthorities);
+                        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+                    }
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

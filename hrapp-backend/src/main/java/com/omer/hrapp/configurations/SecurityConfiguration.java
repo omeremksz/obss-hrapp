@@ -55,6 +55,8 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .requestMatchers(HttpMethod.GET, "/jobs", "/jobs/*", "/auth/**")
                 .permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/specialist", "/auth/applicant")
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

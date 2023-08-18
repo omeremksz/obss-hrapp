@@ -12,17 +12,9 @@ const Auth = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const linkedInLogin = "https://www.linkedin.com/oauth/v2/authorization?"+
-    "response_type=code&client_id=86yev8xbgl6hqk" +
+    "response_type=code&client_id=77oimdom7ofswl" +
     "&redirect_uri=http://localhost:8080" +
     "&state=ASk220aSFAxx&scope=openid%20profile%20email"
-
-    const isInAuthentication = () => {
-        const url = window.location.search;
-        if(url && url.split("?")) {
-            return url.split("?")[1].substr(0,4) === "code";
-        }
-        return false;
-    }
 
     const handleUserName = (value) => {
         setUserName(value);
@@ -38,6 +30,14 @@ const Auth = () => {
             setUserName("");
             setPassword("");
         }
+    }
+
+    const isInAuthentication = () => {
+        const url = window.location.search;
+        if(url && url.split("?")) {
+            return url.split("?")[1].substr(0,4) === "code";
+        }
+        return false;
     }
 
     useEffect(() => {
@@ -63,7 +63,7 @@ const Auth = () => {
         }
       }, [navigate, userName]);
 
-    const sendSpecialistRequest = (path) => {
+    const sendSpecialistRequest = () => {
         PostWithoutAuth("/auth/specialist", {
             userName : userName,
             password: password,

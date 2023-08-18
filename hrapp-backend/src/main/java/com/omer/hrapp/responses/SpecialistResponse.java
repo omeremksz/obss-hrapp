@@ -11,7 +11,6 @@ public class SpecialistResponse {
     private String userName;
     private String firstName;
     private String lastName;
-    private String password;
     private String email;
     private List<JobResponse> jobs;
 
@@ -20,7 +19,6 @@ public class SpecialistResponse {
         this.userName = entity.getUserName();
         this.firstName = entity.getFirstName();
         this.lastName = entity.getLastName();
-        this.password = entity.getPassword();
         this.email = entity.getEmail();
         this.jobs = jobs;
     }

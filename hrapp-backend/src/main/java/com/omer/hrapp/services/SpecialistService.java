@@ -32,7 +32,7 @@ public class SpecialistService {
         return specialistRepository.findById(specialistId).orElse(null);
     }
 
-    public Specialist getSpecialistByUserName(String userName){
+    public Optional<Specialist> getSpecialistByUserName(String userName){
         return specialistRepository.findByUserName(userName);
     }
 
@@ -45,7 +45,6 @@ public class SpecialistService {
     public Specialist createNewSpecialist(SpecialistCreateRequest specialistCreateRequest) {
         Specialist toSave = new Specialist();
         toSave.setUserName(specialistCreateRequest.getUserName());
-        toSave.setPassword(specialistCreateRequest.getPassword());
         toSave.setFirstName(specialistCreateRequest.getFirstName());
         toSave.setLastName(specialistCreateRequest.getLastName());
         toSave.setEmail(specialistCreateRequest.getEmail());
@@ -57,7 +56,6 @@ public class SpecialistService {
         if(specialist.isPresent()){
             Specialist toUpdate = specialist.get();
             toUpdate.setUserName(specialistUpdateRequest.getUserName());
-            toUpdate.setPassword(specialistUpdateRequest.getPassword());
             toUpdate.setFirstName(specialistUpdateRequest.getFirstName());
             toUpdate.setLastName(specialistUpdateRequest.getLastName());
             toUpdate.setEmail(specialistUpdateRequest.getEmail());

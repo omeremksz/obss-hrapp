@@ -1,6 +1,8 @@
 package com.omer.hrapp.controllers;
 
 import com.omer.hrapp.entities.Specialist;
+import com.omer.hrapp.exceptions.LinkedInAccessTokenExpiredException;
+import com.omer.hrapp.exceptions.NotFoundException;
 import com.omer.hrapp.requests.AuthRequest;
 import com.omer.hrapp.responses.AuthResponse;
 import com.omer.hrapp.security.JwtTokenProvider;
@@ -14,6 +16,9 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -37,12 +42,12 @@ public class AuthController {
         String password = authRequest.getPassword();
         Authentication auth = new UsernamePasswordAuthenticationToken(userName, password);
         authenticate(auth);
-        Specialist specialist = specialistService.getSpecialistByUserName(userName);
-        if (specialist != null) {
-            final String token = JwtTokenProvider.generateToken(specialist.getFirstName());
-            return ResponseEntity.ok(new AuthResponse(specialist.getId(), "Bearer " + token));
+        Optional<Specialist> specialist = specialistService.getSpecialistByUserName(userName);
+        if (specialist.isPresent()) {
+            final String token = JwtTokenProvider.generateToken(specialist.get().getUserName());
+            return ResponseEntity.ok(new AuthResponse(specialist.get().getId(), "Bearer " + token));
         } else {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -59,10 +64,14 @@ public class AuthController {
     @PostMapping("/applicant")
     public ResponseEntity<?> authenticateApplicantRequest(@RequestParam("code") String authorizationCode) throws Exception{
         try {
-            String token = authService.exchangeLinkedInToken(authorizationCode);
-
-        } catch () {
-
+            Map<Long, String > resultMap = authService.exchangeLinkedInToken(authorizationCode);
+            Long applicantId = resultMap.keySet().iterator().next();
+            String token = resultMap.get(applicantId);
+            return ResponseEntity.ok(new AuthResponse(applicantId, "Bearer " + token));
+        } catch (NotFoundException e1) {
+            return new ResponseEntity<>("", HttpStatus.NOT_FOUND);
+        } catch (LinkedInAccessTokenExpiredException e2) {
+            return new ResponseEntity<>("", HttpStatus.CONFLICT);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.omer.hrapp.security;
 
+import com.omer.hrapp.entities.Applicant;
 import com.omer.hrapp.entities.Specialist;
+import com.omer.hrapp.exceptions.NotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,13 +19,13 @@ import java.util.function.Function;
 
 public class JwtTokenProvider {
 
-    public static String generateToken(String userName) throws Exception {
+    public static String generateToken(String subject) throws Exception {
         try {
             Map<String, Object> claims = new HashMap<>();
             Instant now = Instant.now();
             String jwtToken = Jwts.builder()
                     .setClaims(claims)
-                    .setSubject(userName)
+                    .setSubject(subject)
                     .setId(UUID.randomUUID().toString())
                     .setIssuedAt(Date.from(now))
                     .setExpiration(Date.from(now.plus(60, ChronoUnit.MINUTES)))
@@ -50,12 +52,20 @@ public class JwtTokenProvider {
         }
     }
 
-    public Boolean validateToken(String token, Specialist userDetails) throws Exception {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUserName()) && !isTokenExpired(token));
+    public Boolean validateToken(String token, Specialist specialistUserDetails, Applicant applicantUserDetails) throws Exception {
+        final String subject = getSubjectFromToken(token);
+        if(specialistUserDetails != null) {
+            String userName = subject;
+            return (userName.equals(specialistUserDetails.getUserName()) && !isTokenExpired(token));
+        } else if (applicantUserDetails != null) {
+            String email = subject;
+            return (email.equals(applicantUserDetails.getEmail()) && !isTokenExpired(token));
+        } else {
+            throw new NotFoundException();
+        }
     }
 
-    public String getUsernameFromToken(String token) throws Exception {
+    public String getSubjectFromToken(String token) throws Exception {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
