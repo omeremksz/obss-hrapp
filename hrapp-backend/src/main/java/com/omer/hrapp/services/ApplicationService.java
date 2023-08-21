@@ -10,7 +10,6 @@ import com.omer.hrapp.responses.ApplicationResponse;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +43,9 @@ public class ApplicationService {
         return applicationList.stream().map(a -> new ApplicationResponse(a)).collect(Collectors.toList());
     }
 
-    public Application getApplicationById(Long applicationId) {
-        return applicationRepository.findById(applicationId).orElse(null);
+    public ApplicationResponse getApplicationById(Long applicationId) {
+        Application application = applicationRepository.findById(applicationId).orElse(null);
+        return new ApplicationResponse(application);
     }
 
     public Application createNewApplication(ApplicationCreateRequest applicationCreateRequest) {

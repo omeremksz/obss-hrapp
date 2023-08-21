@@ -11,6 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { PostWithAuth } from '../../services/HttpService';
+import { Link } from 'react-router-dom';
 
 const generateRandomCode = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz01234567890123456789';
@@ -18,7 +19,8 @@ const generateRandomCode = () => {
     return randomCode;
 };
 
-const JobForm = () => {
+const JobForm = (props) => {
+        const { id } = props;
         const code = "#"+generateRandomCode();
         const specialistId = localStorage.getItem("currentUser");
         const[title, setTitle] = useState("");
@@ -170,7 +172,11 @@ const JobForm = () => {
                     </CardContent>
                     <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
                         <CardActions>
-                            <Button variant="contained" size="small" onClick={handleSubmit}>Post</Button>
+                            <Button variant="contained" size="small" onClick={handleSubmit}>
+                            <Link style={{textDecoration: "none", color:"white"}} to={{ pathname: '/specialists/' + id + '/jobs'}} >
+                                Post
+                            </Link>
+                            </Button>
                         </CardActions>
                     </Box>
                 </Card>

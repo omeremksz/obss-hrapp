@@ -22,7 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-
     private LdapAuthProvider ldapAuthProvider;
     private JwtRequestFilter jwtRequestFilter;
     private JwtAuthenticationEntryPoint handler;
@@ -53,9 +52,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeRequests()
-                .requestMatchers(HttpMethod.GET, "/jobs", "/jobs/*", "/auth/**")
+                .requestMatchers(HttpMethod.GET, "/jobs", "/jobs/*", "/auth/**", "/linkedin/callback")
                 .permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/specialist", "/auth/applicant")
+                .requestMatchers(HttpMethod.POST, "/auth/specialist")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

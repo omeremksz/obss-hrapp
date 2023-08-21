@@ -19,7 +19,6 @@ public class JobController {
         this.jobService = jobService;
     }
 
-
     @GetMapping("/{jobId}")
     public JobResponse getJobById(@PathVariable Long jobId){
         return jobService.getJobByIdWithApplications(jobId);

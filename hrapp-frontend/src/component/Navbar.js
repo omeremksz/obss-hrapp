@@ -10,13 +10,15 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@emotion/react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import WorkIcon from '@mui/icons-material/Work';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 function Navbar() {
   const { palette } = useTheme();
-  const [anchorElUser, setAnchorElUser] = React.useState(null)
-  const navigate = useNavigate();
+  const [anchorElUser, setAnchorElUser] = useState(null)
+  const [dashboardURL, setDashboardURL] = useState(null)
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -30,8 +32,18 @@ function Navbar() {
     localStorage.removeItem("tokenKey");
     localStorage.removeItem("currentUser");
     localStorage.removeItem("userName");
-    navigate(0);
+    setTimeout(() => {
+      window.location.href = `/auth`;
+    }, 500);
   }
+
+  useEffect(() => {
+    if (localStorage.getItem("role") === "ROLE_SPECIALIST") {
+      setDashboardURL("/specialists/");
+    } else {
+      setDashboardURL("/applicants/");
+    }
+  }, []);
 
   return (
     <AppBar position="static">
@@ -89,7 +101,7 @@ function Navbar() {
               ) :(
               <Box>
               <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/specialists/' + localStorage.getItem("currentUser")}}>Dashboard</Link></Typography>
+                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: dashboardURL + localStorage.getItem("currentUser")}}>Dashboard</Link></Typography>
               </MenuItem>
               <MenuItem onClick={handleLogOut}>
                 <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/'}}>Log Out</Link></Typography>

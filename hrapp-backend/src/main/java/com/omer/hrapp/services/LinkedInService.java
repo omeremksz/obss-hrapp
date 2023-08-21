@@ -32,7 +32,7 @@ public class LinkedInService {
     private static final String PROFILE_ENDPOINT = "https://api.linkedin.com/v2/userinfo";
     private static final String CLIENT_ID = "77oimdom7ofswl";
     private static final String CLIENT_SECRET = "DJnkdgI2NMrszLkK";
-    private static final String REDIRECT_URI = "http://localhost:3000/";
+    private static final String REDIRECT_URI = "http://localhost:8080/linkedin/callback";
     private static final String TOKEN_ENDPOINT = "https://www.linkedin.com/oauth/v2/accessToken";
 
     private ApplicantService applicantService;

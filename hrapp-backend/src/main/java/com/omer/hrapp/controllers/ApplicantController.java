@@ -1,6 +1,9 @@
 package com.omer.hrapp.controllers;
 
 import com.omer.hrapp.entities.Applicant;
+import com.omer.hrapp.requests.ApplicantCreateRequest;
+import com.omer.hrapp.requests.ApplicantUpdateRequest;
+import com.omer.hrapp.requests.ApplicationCreateRequest;
 import com.omer.hrapp.services.ApplicantService;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/applicants")
 public class ApplicantController {
-
     private ApplicantService applicantService;
 
     public ApplicantController(ApplicantService applicantService) {
@@ -32,8 +34,8 @@ public class ApplicantController {
     }
 
     @PutMapping("/{applicantId}")
-    public Applicant updateApplicantById(@PathVariable Long applicantId, @RequestBody Applicant newApplicant){
-        return applicantService.updateApplicantById(applicantId, newApplicant);
+    public Applicant updateApplicantById(@PathVariable Long applicantId, @RequestBody ApplicantUpdateRequest applicantUpdateRequest){
+        return applicantService.updateApplicantById(applicantId, applicantUpdateRequest);
     }
 
     @DeleteMapping("/{applicantId}")

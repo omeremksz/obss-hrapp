@@ -13,7 +13,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/blacklists")
 public class BlacklistController {
-
     private BlacklistService blacklistService;
 
     public BlacklistController(BlacklistService blacklistService) {

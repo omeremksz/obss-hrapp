@@ -2,6 +2,9 @@ package com.omer.hrapp.services;
 
 import com.omer.hrapp.entities.Applicant;
 import com.omer.hrapp.repositories.ApplicantRepository;
+import com.omer.hrapp.requests.ApplicantCreateRequest;
+import com.omer.hrapp.requests.ApplicantUpdateRequest;
+import com.omer.hrapp.requests.ApplicationCreateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,14 +34,11 @@ public class ApplicantService {
         return applicantRepository.save(newApplicant);
     }
 
-    public Applicant updateApplicantById(Long applicantId, Applicant newApplicant) {
+    public Applicant updateApplicantById(Long applicantId, ApplicantUpdateRequest applicantUpdateRequest) {
         Optional<Applicant> applicant = applicantRepository.findById(applicantId);
         if(applicant.isPresent()){
             Applicant foundApplicant = applicant.get();
-            foundApplicant.setFirstName(newApplicant.getFirstName());
-            foundApplicant.setLastName(newApplicant.getLastName());
-            foundApplicant.setEmail(newApplicant.getEmail());
-            foundApplicant.setAbout(newApplicant.getAbout());
+            foundApplicant.setLinkedInProfileURL(applicantUpdateRequest.getLinkedInProfileURL());
             applicantRepository.save(foundApplicant);
             return foundApplicant;
         }else

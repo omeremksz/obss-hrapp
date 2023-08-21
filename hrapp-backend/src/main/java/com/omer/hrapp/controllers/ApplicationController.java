@@ -13,7 +13,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
-
     private ApplicationService applicationService;
 
     public ApplicationController(ApplicationService applicationService) {
@@ -26,7 +25,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/{applicationId}")
-    public Application getApplicationById(@PathVariable Long applicationId){
+    public ApplicationResponse getApplicationById(@PathVariable Long applicationId){
         return applicationService.getApplicationById(applicationId);
     }
 

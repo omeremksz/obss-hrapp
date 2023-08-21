@@ -1,1 +1,1 @@
-/applicants/:id'
+'/specialists/:id/jobs/:jobId/applications'

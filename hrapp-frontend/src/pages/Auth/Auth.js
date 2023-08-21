@@ -7,13 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { PostWithoutAuth } from '../../services/HttpService'
 
 const Auth = () => {
-
+    const navigate = useNavigate();
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();
+
     const linkedInLogin = "https://www.linkedin.com/oauth/v2/authorization?"+
     "response_type=code&client_id=77oimdom7ofswl" +
-    "&redirect_uri=http://localhost:3000/" +
+    "&redirect_uri=http://localhost:8080/linkedin/callback" +
     "&state=ASk220aSFAxx&scope=openid%20profile%20email"
 
     const handleUserName = (value) => {
@@ -41,8 +41,9 @@ const Auth = () => {
         .then((result) => {
                         localStorage.setItem("tokenKey", result.message);
                         localStorage.setItem("currentUser", result.id);
+                        localStorage.setItem("role", "ROLE_SPECIALIST");
                         localStorage.setItem("userName", userName);
-                        navigate("/");
+                        navigate("/specialists/" + result.id);
                     })
         .catch((err) => console.log(err))
     }
@@ -83,7 +84,7 @@ const Auth = () => {
                         />
                         <Button fullWidth variant="contained" onClick={() => handleSpecialistLogin()} sx={{ mb: 3 }}>Log In</Button>
                         <Button fullWidth variant="contained" > 
-                            <a style={{textDecoration: "none", color:"white"}} href={linkedInLogin} class="redirect">Log In with LinkedIn</a>
+                            <a style={{textDecoration: "none", color:"white"}} href={linkedInLogin} class="redirect" >Log In with LinkedIn</a>
                         </Button>
                     </Box>
                 </Box>
