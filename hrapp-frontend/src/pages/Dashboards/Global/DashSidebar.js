@@ -21,13 +21,17 @@ const DashSidebar = () => {
     const logOut = () => {
         localStorage.removeItem("tokenKey");
         localStorage.removeItem("currentUser");
-        localStorage.removeItem("userName");
         localStorage.removeItem("role");
         setTimeout(() => {
-            navigate('/');
-        }, 500)
+            navigate('/auth');
+        }, 300)
     }
 
+    const homeButton = () => {
+        setTimeout(() => {
+            navigate('/');
+        }, 300)
+    }
 
     return (
         <>
@@ -78,13 +82,13 @@ const DashSidebar = () => {
                                         <MenuItem component={<Link to={{ pathname: '/specialists/' + id }} />} icon={<AccountBoxIcon />}> Profile </MenuItem>
                                         <MenuItem component={<Link to={{ pathname: '/specialists/' + id + '/jobs'}} />} icon={<WorkIcon />}> Jobs </MenuItem>
                                         <MenuItem component={<Link to={{ pathname: '/specialists/' + id + '/blacklist'}} />} icon={<BlockIcon />}> Blacklist </MenuItem>
-                                        <MenuItem component={<Link to="/" />} icon={<HomeIcon />}> Home </MenuItem>
+                                        <MenuItem onClick={homeButton} icon={<HomeIcon />}> Home </MenuItem>
                                     </>
                                     :
                                     <>
                                         <MenuItem component={<Link to={{ pathname: '/applicants/' + id }} />} icon={<AccountBoxIcon />}> Profile </MenuItem>
-                                        <MenuItem component={<Link to="/user/jobs" />} icon={<WorkHistoryIcon />}> Applied Jobs </MenuItem>
-                                        <MenuItem component={<Link to="/" />} icon={<HomeIcon />}> Home </MenuItem>
+                                        <MenuItem component={<Link to={{ pathname: '/applicants/' + id + '/applied-jobs' }}/>} icon={<WorkHistoryIcon />}> Applied Jobs </MenuItem>
+                                        <MenuItem onClick={homeButton} icon={<HomeIcon />}> Home </MenuItem>
                                     </>
                             }
 
@@ -113,7 +117,7 @@ const DashSidebar = () => {
                                 },
                             }}
                         >
-                            <MenuItem onClick={logOut} icon={<LoginIcon />}>   Log out </MenuItem>
+                            <MenuItem onClick={logOut} icon={<LoginIcon />}> Log out </MenuItem>
                         </Menu>
                     </Box>
                 </Box>

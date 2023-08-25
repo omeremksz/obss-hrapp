@@ -5,6 +5,9 @@ import com.omer.hrapp.repositories.ApplicantRepository;
 import com.omer.hrapp.requests.ApplicantCreateRequest;
 import com.omer.hrapp.requests.ApplicantUpdateRequest;
 import com.omer.hrapp.requests.ApplicationCreateRequest;
+import com.omer.hrapp.responses.ApplicantResponse;
+import com.omer.hrapp.responses.ApplicationResponse;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +15,12 @@ import java.util.Optional;
 
 @Service
 public class ApplicantService {
+
+    private ApplicationService applicationService;
     private ApplicantRepository applicantRepository;
 
-    public ApplicantService(ApplicantRepository applicantRepository) {
+    public ApplicantService(@Lazy ApplicationService applicationService, ApplicantRepository applicantRepository) {
+        this.applicationService = applicationService;
         this.applicantRepository = applicantRepository;
     }
 
@@ -24,6 +30,11 @@ public class ApplicantService {
 
     public Applicant getApplicantById(Long applicantId) {
         return applicantRepository.findById(applicantId).orElse(null);
+    }
+    public ApplicantResponse getApplicantByIdWithApplications(Long applicantId) {
+        Applicant applicant = applicantRepository.findById(applicantId).orElse(null);
+        List<ApplicationResponse> applications = applicationService.gelAllApplications(Optional.of(applicantId), Optional.ofNullable(null));
+        return new ApplicantResponse(applicant, applications);
     }
 
     public Optional<Applicant> getApplicantByEmail(String email) {

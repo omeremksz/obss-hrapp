@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, TextField } from '@mui/material'
+import { Alert, Avatar, Box, Button, Snackbar, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import Navbar from '../../component/Navbar'
 import { LockClockOutlined } from '@mui/icons-material'
@@ -10,6 +10,10 @@ const Auth = () => {
     const navigate = useNavigate();
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+
+    const [authError, setAuthError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const linkedInLogin = "https://www.linkedin.com/oauth/v2/authorization?"+
     "response_type=code&client_id=77oimdom7ofswl" +
@@ -25,6 +29,12 @@ const Auth = () => {
     }
 
     const handleSpecialistLogin = () => {
+        if (!userName || !password) {
+            setAuthError("Username and/or password cannot be empty!");
+            setSnackbarOpen(true);
+            return;
+        }
+
         sendSpecialistRequest();
         if(localStorage.getItem("currentUser")!== null) {
             setUserName("");
@@ -42,10 +52,18 @@ const Auth = () => {
                         localStorage.setItem("tokenKey", result.message);
                         localStorage.setItem("currentUser", result.id);
                         localStorage.setItem("role", "ROLE_SPECIALIST");
-                        localStorage.setItem("userName", userName);
-                        navigate("/specialists/" + result.id);
+                        setSuccessMessage("Login successful!");
+                        setSnackbarOpen(true);
+                        setTimeout(() => {
+                            navigate("/specialists/" + result.id);
+                        }, 2000);
                     })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+            setAuthError("Invalid username or password");
+            setSnackbarOpen(true);
+            setUserName("");
+            setPassword("");
+        })
     }
 
   return (
@@ -68,6 +86,7 @@ const Auth = () => {
                                 }}
                                 placeholder="Username"
                                 onChange={(i) => handleUserName(i.target.value)}
+                                value={userName}
                             />
 
                         <TextField sx={{ mb: 3 }}
@@ -81,6 +100,7 @@ const Auth = () => {
                             }}
                             placeholder="Password"
                             onChange={(i) => handlePassword(i.target.value)}
+                            value={password}
                         />
                         <Button fullWidth variant="contained" onClick={() => handleSpecialistLogin()} sx={{ mb: 3 }}>Log In</Button>
                         <Button fullWidth variant="contained" > 
@@ -89,6 +109,11 @@ const Auth = () => {
                     </Box>
                 </Box>
             </Box>
+            <Snackbar open={snackbarOpen} autoHideDuration={successMessage ? 2000 : 4000} onClose={() => setSnackbarOpen(false)} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+              <Alert elevation={6} severity={successMessage ? "success" : "error"} onClose={() => setSnackbarOpen(false)} sx={{ width: '100%' }}>
+                {successMessage || authError}
+              </Alert>
+            </Snackbar>
             <Footer />
         </Box>
     </>

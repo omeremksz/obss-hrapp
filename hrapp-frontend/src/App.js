@@ -14,6 +14,8 @@ import DashApplicationEdit from './pages/Dashboards/Specialist/DashApplicationEd
 import DashBlacklist from './pages/Dashboards/Specialist/DashBlacklist';
 import WelcomePage from './pages/Auth/WelcomePage';
 import DashApplicant from './pages/Dashboards/Applicant/DashApplicant';
+import DashAppliedJobs from './pages/Dashboards/Applicant/DashAppliedJobs';
+import DashApplicationDetails from './pages/Dashboards/Applicant/DashApplicationDetails';
 
 const DashSpecialistHOC = Layout(DashSpecialist);
 const DashJobsHOC = Layout(DashJobs);
@@ -23,6 +25,8 @@ const DashApplicationEditHOC = Layout(DashApplicationEdit)
 const DashBlacklistHoc = Layout(DashBlacklist);
 
 const DashApplicantHOC = Layout(DashApplicant);
+const DashAppliedJobsHOC = Layout(DashAppliedJobs);
+const DashApplicationDetailsHOC = Layout(DashApplicationDetails);
 
 const App = () => {
 
@@ -35,6 +39,8 @@ const App = () => {
           <Route path='/' element={<Home/>}/>
 
           <Route path='/applicants/:id' element={<DashApplicantHOC/>}/>
+          <Route path='/applicants/:id/applied-jobs' element={<DashAppliedJobsHOC/>}/>
+          <Route path='/applicants/:id/applied-jobs/:applicationId/application-details' element={<DashApplicationDetailsHOC/>}/>
           <Route path='/applicants/welcome-page/' element={<WelcomePage/>}/>
 
           <Route path='/specialists/:id' element={<DashSpecialistHOC />}/>

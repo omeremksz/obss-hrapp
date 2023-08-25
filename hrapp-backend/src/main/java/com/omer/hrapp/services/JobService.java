@@ -8,6 +8,7 @@ import com.omer.hrapp.responses.ApplicationResponse;
 import com.omer.hrapp.responses.JobResponse;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,6 +59,7 @@ public class JobService {
         toSave.setDescription(jobCreateRequest.getDescription());
         toSave.setActivationTime(jobCreateRequest.getActivationTime());
         toSave.setDeactivationTime(jobCreateRequest.getDeactivationTime());
+        toSave.setActivationStatus("Active");
         toSave.setJobCategory(jobCreateRequest.getJobCategory());
         toSave.setJobPosition(jobCreateRequest.getJobPosition());
         toSave.setSpecialist(specialist);
@@ -68,14 +70,14 @@ public class JobService {
         Optional<Job> job = jobRepository.findById(jobId);
         if (job.isPresent()){
             Job toUpdate = job.get();
-            toUpdate.setCode(jobUpdateRequest.getCode());
-            toUpdate.setTitle(jobUpdateRequest.getTitle());
-            toUpdate.setLocation(jobUpdateRequest.getLocation());
-            toUpdate.setDescription(jobUpdateRequest.getDescription());
-            toUpdate.setActivationTime(jobUpdateRequest.getActivationTime());
-            toUpdate.setDeactivationTime(jobUpdateRequest.getDeactivationTime());
-            toUpdate.setJobCategory(jobUpdateRequest.getJobCategoryName());
-            toUpdate.setJobPosition(jobUpdateRequest.getJobPositionName());
+            if(jobUpdateRequest.getActivationStatus().equals("Active")) {
+                toUpdate.setActivationTime(jobUpdateRequest.getActivationTime());
+                toUpdate.setDeactivationTime(jobUpdateRequest.getDeactivationTime());
+                toUpdate.setActivationStatus(jobUpdateRequest.getActivationStatus());
+            } else {
+                toUpdate.setActivationStatus(jobUpdateRequest.getActivationStatus());
+            }
+
             return jobRepository.save(toUpdate);
         }else
             return null;

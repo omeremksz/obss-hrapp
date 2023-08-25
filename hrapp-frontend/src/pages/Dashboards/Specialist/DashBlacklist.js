@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { DeleteWithAuth, GetWithAuth } from '../../../services/HttpService';
-import { Box, Button, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Box, Button, ListItem, ListItemText, Typography } from '@mui/material';
 import { FixedSizeList } from 'react-window';
 import moment from 'moment';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -41,11 +41,10 @@ const RenderRow = (props: ListChildComponentProps) => {
       deleteBlacklistEntity(blacklistEntityId);
   }
 
-  const formattedBlacklistedAt = moment(blacklistEntity.blacklistedAt).format('YYYY-MM-DD HH:mm:ss');;
+  const formattedBlacklistedAt = moment(blacklistEntity.blacklistedAt).format('YYYY-MM-DD HH:mm:ss');
   
   return (
-    <ListItem style={style} key={index} component="div" disablePadding >
-      <ListItemButton>
+    <ListItem style={style} key={index} component="div" >
       {applicant ? (
           <>
           <ListItemText primary={`Applicant Name: ${applicant.firstName} ${applicant.lastName} | Blacklisted at: ${formattedBlacklistedAt} | Explanation: ${blacklistEntity.explanation}`} />
@@ -56,7 +55,6 @@ const RenderRow = (props: ListChildComponentProps) => {
       ) : (
           <ListItemText primary="Loading..." />
       )}
-      </ListItemButton>
     </ListItem>
   );
 }

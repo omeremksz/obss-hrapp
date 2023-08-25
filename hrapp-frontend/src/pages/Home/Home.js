@@ -37,6 +37,14 @@ const Home = () => {
       return <Box> Loading... </Box>
   }
   else {
+    const currentTime = new Date();
+    const activeJobs = jobList.filter(
+      (job) =>
+        job.activationStatus === "Active" &&
+        currentTime >= new Date(job.activationTime) &&
+        currentTime <= new Date(job.deactivationTime)
+    );
+    
       return (
       <>
         <Box sx={{bgcolor: "#fafafa", minHeight: "100vh"}}>
@@ -48,7 +56,7 @@ const Home = () => {
               spacing={{ xs: 1, sm: 2, md: 4 }}
             >
               <Box sx={{flex:5, p:2}}>
-                {jobList.map(job => (
+                {activeJobs.map(job => (
                   <Job id ={job.id} code = {job.code} title = {job.title} location = {job.location} 
                   description = {job.description} activationTime = {job.activationTime} 
                   deactivationTime = {job.deactivationTime} jobCategory = {job.jobCategory} jobPosition = {job.jobPosition}/>

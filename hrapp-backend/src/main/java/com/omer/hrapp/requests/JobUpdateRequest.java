@@ -6,12 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class JobUpdateRequest {
-    private String code;
-    private String title;
-    private String location;
-    private String description;
     private LocalDateTime activationTime;
     private LocalDateTime deactivationTime;
-    private String jobCategoryName;
-    private String jobPositionName;
+    private String activationStatus;
 }

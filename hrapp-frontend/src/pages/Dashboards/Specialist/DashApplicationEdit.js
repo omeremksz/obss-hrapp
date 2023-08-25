@@ -4,7 +4,8 @@ import { GetWithAuth, PostWithAuth, PutWithAuth } from '../../../services/HttpSe
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import moment from 'moment';
 
 const DashApplicationEdit = () => {
   const { id, jobId, applicationId } = useParams();
@@ -19,9 +20,11 @@ const DashApplicationEdit = () => {
   const [explanation, setExplanation] = useState("");
   const [isUpdated, setIsUpdated] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
+  const [explanationError, setExplanationError] = useState(false);
+  const navigate = useNavigate();
 
-  const formattedAppliedDate = new Date(appliedDate).toLocaleString();
-  const formattedLastUpdateTime = new Date(lastUpdateTime).toLocaleString();
+  const formattedAppliedDate = moment(appliedDate).format('YYYY-MM-DD HH:mm:ss');
+  const formattedLastUpdateTime = moment(lastUpdateTime).format('YYYY-MM-DD HH:mm:ss');
 
   useEffect(() => {
     GetWithAuth(`/applications/${applicationId}`)
@@ -100,13 +103,18 @@ const DashApplicationEdit = () => {
   }
 
   const  handleAddButton = () => {
-      addBlacklist();
-      setIsAdded(true);
-      setExplanation("");
+    if (!explanation) {
+      setExplanationError(true);
+      return;
+    }
 
-      setTimeout(() => {
-        window.location.href = `/specialists/${id}/jobs/${jobId}/applications`;
-      }, 1500);
+    addBlacklist();
+    setIsAdded(true);
+    setExplanation("");
+
+    setTimeout(() => {
+      navigate("/specialists/"+ id +"/jobs/"+ jobId +"/applications");
+    }, 2000);
   }
 
   const handleSelect = (event) => {
@@ -126,16 +134,6 @@ const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
 
   return (
     <Box sx={{flex:5, p:2}}>
-    <Snackbar open={isUpdated} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%'}}>
-            Application status changed successfully!
-        </Alert>
-    </Snackbar>
-    <Snackbar open={isAdded} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: '100%'}}>
-            Applicant added to blacklist successfully!
-        </Alert>
-    </Snackbar>
     <Box display="flex" justifyContent="flex-end" alignItems="flex-end" >
       <Button size="small" variant="contained" color="primary" endIcon={<ArrowBackIcon />} >
         <Link style={{textDecoration: "none", color:"white"}} to={{ pathname: '/specialists/' + id + '/jobs/' + jobId + '/applications'}} >
@@ -183,7 +181,7 @@ const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
               </> 
               ) : (
                   <Typography variant="h6">
-                            Loading specialist data...
+                            Loading applicant data...
                   </Typography>
               )}
             </CardContent>
@@ -209,7 +207,11 @@ const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
                             inputProps={{maxLength:250}}
                             fullWidth
                             value={explanation}
-                            onChange={ (i) => handleExplanation(i.target.value)}
+                            onChange={ (i) => {
+                              handleExplanation(i.target.value);
+                              setExplanationError(false); 
+                            }}
+                            error={explanationError}
                         />}
                     </Typography>
                     <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
@@ -220,6 +222,21 @@ const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
                 </CardContent>
             </Collapse>
         </Card>
+        <Snackbar open={isUpdated} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+            <Alert elevation={6} onClose={handleClose} severity="success" sx={{ width: '100%'}}>
+                Application status changed successfully!
+            </Alert>
+        </Snackbar>
+        <Snackbar open={isAdded} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+            <Alert elevation={6} onClose={handleClose} severity="success" sx={{ width: '100%'}}>
+                Applicant added to blacklist successfully!
+            </Alert>
+        </Snackbar>
+        <Snackbar open={explanationError} autoHideDuration={4000} onClose={() => setExplanationError(false)} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+          <Alert elevation={6} onClose={() => setExplanationError(false)} severity="error" sx={{ width: '100%' }}>
+            Please provide an explanation for blacklisting.
+          </Alert>
+        </Snackbar>
     </Box>
   )
 }

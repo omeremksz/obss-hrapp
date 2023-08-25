@@ -4,6 +4,8 @@ import com.omer.hrapp.entities.Applicant;
 import com.omer.hrapp.requests.ApplicantCreateRequest;
 import com.omer.hrapp.requests.ApplicantUpdateRequest;
 import com.omer.hrapp.requests.ApplicationCreateRequest;
+import com.omer.hrapp.responses.ApplicantResponse;
+import com.omer.hrapp.responses.ApplicationResponse;
 import com.omer.hrapp.services.ApplicantService;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +26,8 @@ public class ApplicantController {
     }
 
     @GetMapping("/{applicantId}")
-    public Applicant getApplicantById(@PathVariable Long applicantId){
-        return applicantService.getApplicantById(applicantId);
+    public ApplicantResponse getApplicantById(@PathVariable Long applicantId){
+        return applicantService.getApplicantByIdWithApplications(applicantId);
     }
 
     @PostMapping

@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/specialists")
 public class SpecialistController {
-    SpecialistService specialistService;
+    private SpecialistService specialistService;
 
     public SpecialistController(SpecialistService specialistService) {
         this.specialistService = specialistService;

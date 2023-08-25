@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { PostWithAuth } from '../../services/HttpService';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const generateRandomCode = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyz01234567890123456789';
@@ -30,9 +30,10 @@ const JobForm = (props) => {
         const[location, setLocation] = useState("");
         const[activationTime, setActivationTime] = useState(null);
         const[deactivationTime, setDectivationTime] = useState(null);
-    
-
+        const [isError, setIsError] = useState(false);
+        const [errorSnackbarMessage, setErrorSnackbarMessage] = useState("");
         const[isPosted, setIsPosted] = useState(false);
+        const navigate = useNavigate();
 
         const handleTitle = (value) => {
             setTitle(value);
@@ -60,6 +61,12 @@ const JobForm = (props) => {
         }
 
         const handleSubmit = () => {
+            if (!title || !jobCategory || !jobPosition || !description || !location || !activationTime || !deactivationTime) {
+                setErrorSnackbarMessage("All fields must be filled.");
+                setIsError(true);
+                return ;
+            }
+              
             saveJob();
             setIsPosted(true);
             setTitle("");
@@ -69,7 +76,9 @@ const JobForm = (props) => {
             setLocation("");
             setActivationTime(null);
             setDectivationTime(null);
-            window.location.reload();
+            setTimeout(() => {
+                navigate('/specialists/' + id + '/jobs');
+            }, 3000);
         }
 
         const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
@@ -81,13 +90,16 @@ const JobForm = (props) => {
           };
 
         const saveJob = () => {
+            const formattedActivationTime = activationTime.format("YYYY-MM-DDTHH:mm:ss");
+            const formattedDeactivationTime = deactivationTime.format("YYYY-MM-DDTHH:mm:ss");
+
             PostWithAuth("/jobs", {
                 code: code,
                 title: title,
                 description: description,
                 location: location,
-                activationTime: activationTime,
-                deactivationTime: deactivationTime,
+                activationTime: formattedActivationTime,
+                deactivationTime: formattedDeactivationTime,
                 jobCategory: jobCategory,
                 jobPosition: jobPosition,
                 specialistId: specialistId,
@@ -98,11 +110,6 @@ const JobForm = (props) => {
         
         return (
             <Box sx={{ width: '76%', }}>
-                <Snackbar open={isPosted} autoHideDuration={1500} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
-                    <Alert onClose={handleClose} severity="success" sx={{ width: '100%'}}>
-                        Job is posted successfully!
-                    </Alert>
-                </Snackbar>
                 <Card sx={{ minWidth: 275, mb: 3, mt: 3 }}>
                     <CardContent >
                         <Typography sx={{ mb: 1.5,fontSize: 15,color: "text.secondary"}}>
@@ -173,13 +180,21 @@ const JobForm = (props) => {
                     <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
                         <CardActions>
                             <Button variant="contained" size="small" onClick={handleSubmit}>
-                            <Link style={{textDecoration: "none", color:"white"}} to={{ pathname: '/specialists/' + id + '/jobs'}} >
                                 Post
-                            </Link>
                             </Button>
                         </CardActions>
                     </Box>
                 </Card>
+                <Snackbar open={isPosted} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+                    <Alert elevation={6} onClose={handleClose} severity="success" sx={{ width: '100%'}}>
+                        Job is posted successfully!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={isError} autoHideDuration={4000} onClose={() => setIsError(false)} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+                    <Alert elevation={6} onClose={() => setIsError(false)} severity="error" sx={{ width: '100%' }}>
+                        {errorSnackbarMessage}
+                    </Alert>
+                </Snackbar>
             </Box>
         );
 }

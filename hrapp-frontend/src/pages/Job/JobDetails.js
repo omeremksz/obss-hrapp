@@ -3,15 +3,19 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Box, Container, Stack} from '@mui/material';
+import { Alert, Box, Container, Snackbar, Stack} from '@mui/material';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCallback } from 'react';
 import Navbar from '../../component/Navbar';
 import Footer from '../../component/Footer';
 import Header from '../../component/Header';
 import { GetWithAuth, PostWithAuth } from '../../services/HttpService';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 
 const JobDetails = () => {
     const { id } = useParams();
@@ -19,8 +23,12 @@ const JobDetails = () => {
     const [isApplied, setIsApplied] = useState(false);
     const [inBlacklist, setInBlacklist] = useState(false);
     const isAuthorized = localStorage.getItem("currentUser") == null ? false : true;
+    const role = localStorage.getItem("role");
     const [applicationCount, setApplicationCount] = useState(0);
     const [blacklist, setBlacklist] = useState([]);
+    const [loginRequiredDialogOpen, setLoginRequiredDialogOpen] = useState(false);
+    const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+    const navigate = useNavigate();
 
     const getJob = useCallback(() => {
       fetch("/jobs/"+id)
@@ -74,6 +82,9 @@ const JobDetails = () => {
         jobId: id,
     })
       .then((res) => res.json())
+      .then(() => {
+        setSuccessSnackbarOpen(true);
+      })
       .catch((err) => console.log(err))
   }
 
@@ -91,10 +102,15 @@ const JobDetails = () => {
   useEffect(() => { checkApplications()}, [ checkApplications])
 
   const handleSubmit = () => {
-    if(!isApplied){
+    if (!isAuthorized) {
+      setLoginRequiredDialogOpen(true);
+    } else if (!isApplied){
       setIsApplied(true);
       saveApplication();
       setApplicationCount(applicationCount+1);
+      setTimeout(() => {
+        navigate("/applicants/" +localStorage.getItem("currentUser")+ "/applied-jobs");
+      }, 3000);
     }
   }
     
@@ -141,9 +157,45 @@ const JobDetails = () => {
                         </CardContent>
                         <Box display="flex" justifyContent="flex-end" alignItems="flex-end">
                           <CardActions>
-                            <Button variant="contained" size="small" onClick={handleSubmit} disabled={isApplied || !isAuthorized || inBlacklist }>Apply</Button>
+                          {role !== "ROLE_SPECIALIST" && (
+                            <Button 
+                              variant="contained" 
+                              size="small" 
+                              onClick={handleSubmit} 
+                              disabled={ isApplied || inBlacklist }>
+                                {inBlacklist ? "Blacklisted" : (isApplied ? "Applied" : "Apply")}
+                                </Button>
+                          )}
                             </CardActions>
                         </Box>
+                        <Dialog
+                          open={loginRequiredDialogOpen}
+                          onClose={() => setLoginRequiredDialogOpen(false)}
+                        >
+                          <DialogContent>
+                            <DialogContentText>
+                              You need to be logged in to apply for this job.
+                              Would you like to log in?
+                            </DialogContentText>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              onClick={() => setLoginRequiredDialogOpen(false)}
+                              color="primary"
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                setLoginRequiredDialogOpen(false);
+                                navigate(`/auth`);
+                              }}
+                              color="primary"
+                            >
+                              Log In
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
                       </>
                       ) : (<Box>Loading...</Box>)
                     }
@@ -154,6 +206,11 @@ const JobDetails = () => {
           </Box>
           <Footer/>
         </Box>
+        <Snackbar open={successSnackbarOpen} autoHideDuration={2000} onClose={() => setSuccessSnackbarOpen(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert elevation={6} onClose={() => setSuccessSnackbarOpen(false)} everity="success" sx={{ width: '100%' }}>
+          Congrats, your application was sent successfully!
+        </Alert>
+      </Snackbar>
       </>
     )
 }

@@ -16,6 +16,7 @@ public class JobResponse {
     private String description;
     private LocalDateTime activationTime;
     private LocalDateTime deactivationTime;
+    private String activationStatus;
     private String specialistFirstName;
     private String specialistLastName;
     private Long specialistId;
@@ -31,6 +32,7 @@ public class JobResponse {
         this.description = entity.getDescription();
         this.activationTime = entity.getActivationTime();
         this.deactivationTime = entity.getDeactivationTime();
+        this.activationStatus = entity.getActivationStatus();
         this.specialistFirstName = entity.getSpecialist().getFirstName();
         this.specialistLastName = entity.getSpecialist().getLastName();
         this.specialistId = entity.getSpecialist().getId();
@@ -47,6 +49,7 @@ public class JobResponse {
         this.description = entity.getDescription();
         this.activationTime = entity.getActivationTime();
         this.deactivationTime = entity.getDeactivationTime();
+        this.activationStatus = entity.getActivationStatus();
         this.specialistFirstName = entity.getSpecialist().getFirstName();
         this.specialistLastName = entity.getSpecialist().getLastName();
         this.specialistId = entity.getSpecialist().getId();

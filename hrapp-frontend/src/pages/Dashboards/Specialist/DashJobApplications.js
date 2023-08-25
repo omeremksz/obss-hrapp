@@ -1,10 +1,12 @@
-import { Box, Button, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Alert, Box, Button, ListItem, ListItemText, Snackbar, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { FixedSizeList } from 'react-window';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
-import { GetWithAuth } from '../../../services/HttpService';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DeleteWithAuth, GetWithAuth } from '../../../services/HttpService';
+
 
 const RenderRow = (props: ListChildComponentProps) => {
   const { index, style, applicationList, id, jobId } = props;
@@ -13,6 +15,8 @@ const RenderRow = (props: ListChildComponentProps) => {
   const applicantId = application.applicantId;
   const applicationId = application.id;
   const [applicant, setApplicant] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const getApplicant = useCallback(() => {
     GetWithAuth("/applicants/"+applicantId)
@@ -30,23 +34,63 @@ const RenderRow = (props: ListChildComponentProps) => {
   useEffect(() => { 
     getApplicant();
   }, [getApplicant]);
+
+  const handleDeleteButton = (applicationId) => {
+    deleteJob(applicationId);
+  }
+
+  const deleteJob = (applicationId) => {
+    DeleteWithAuth("/applications/"+applicationId)
+    .then(() => {
+      setSnackbarMessage('Application deleted successfully.');
+      setSnackbarOpen(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    })
+  }
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
     
   return (
-    <ListItem style={style} key={index} component="div" disablePadding >
-      <ListItemButton >
+    <ListItem style={style} key={index} component="div" >
       {applicant ? (
           <>
+          <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={2000}
+              onClose={handleSnackbarClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+              <Alert
+                elevation={6}
+                onClose={handleSnackbarClose}
+                severity="success"
+              >
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
             <ListItemText primary={`${applicant.firstName} ${applicant.lastName} | ${applicant.email}`} />
             <Button size="small" variant="contained" color="primary" endIcon={<EditIcon />}  sx={{ backgroundColor: '#1976D2', color: '#FFFFFF' }} >
               <Link style={{textDecoration: "none", color:"white"}} to={{ pathname: '/specialists/' + id + '/jobs/' + jobId + '/applications/' + applicationId + '/edit'}} >
                 Edit
               </Link>
             </Button>
+            <Button 
+            size="small"
+            variant="outlined"
+            endIcon={<DeleteIcon />}
+            sx={{ marginLeft: 2, color: 'red', borderColor: 'red' }}
+            onClick={() => handleDeleteButton(applicationId)}
+          >
+            Delete
+          </Button>
           </>
         ) : (
           <ListItemText primary="Loading..." />
         )}
-      </ListItemButton>
     </ListItem>
   );
 }
@@ -75,18 +119,22 @@ const DashJobApplications = () => {
 
   return (
     <>
-      {applicant && applicationList.length === 0 ? (
-        <Typography 
-          variant="h6"
-          sx={{
-            padding: 3,
-            textAlign: 'center',
-            color: '#999',
-            fontStyle: 'italic',
-          }}
-        >
-          No Applications Yet
-        </Typography>
+      { applicationList.length === 0 ? (
+        <>
+          <Typography 
+            variant="h6"
+            sx={{
+              padding: 3,
+              textAlign: 'center',
+              color: '#999',
+              fontStyle: 'italic',
+            }}
+          >
+            <Link style={{textDecoration: "none", color:"blue"}} to={{ pathname: '/specialists/' + id + '/jobs'}} >
+              No Applications Yet
+            </Link>
+          </Typography>
+        </>
       ) : (
       <Box
           sx={{

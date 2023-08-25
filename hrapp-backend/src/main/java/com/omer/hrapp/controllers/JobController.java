@@ -13,7 +13,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/jobs")
 public class JobController {
-    JobService jobService;
+    private JobService jobService;
 
     public JobController(JobService jobService) {
         this.jobService = jobService;

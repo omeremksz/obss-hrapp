@@ -10,7 +10,7 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@emotion/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import WorkIcon from '@mui/icons-material/Work';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -19,6 +19,7 @@ function Navbar() {
   const { palette } = useTheme();
   const [anchorElUser, setAnchorElUser] = useState(null)
   const [dashboardURL, setDashboardURL] = useState(null)
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -31,10 +32,17 @@ function Navbar() {
   const handleLogOut = () => {
     localStorage.removeItem("tokenKey");
     localStorage.removeItem("currentUser");
-    localStorage.removeItem("userName");
+    localStorage.removeItem("role");
     setTimeout(() => {
-      window.location.href = `/auth`;
-    }, 500);
+      navigate('/auth');
+  }, 300)
+  }
+
+  const handleLogIn = () => {
+    setAnchorElUser(null);
+    setTimeout(() => {
+      navigate('/auth');
+  }, 300)
   }
 
   useEffect(() => {
@@ -94,8 +102,8 @@ function Navbar() {
             >
               {localStorage.getItem("currentUser") == null ? (
               <Box>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to="/auth">Log In</Link></Typography>
+              <MenuItem onClick={handleLogIn}>
+                <Typography textAlign="center">Log In</Typography>
               </MenuItem>
               </Box>
               ) :(
@@ -104,7 +112,7 @@ function Navbar() {
                 <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: dashboardURL + localStorage.getItem("currentUser")}}>Dashboard</Link></Typography>
               </MenuItem>
               <MenuItem onClick={handleLogOut}>
-                <Typography textAlign="center"><Link style={{ textDecoration: "none", color: palette.primary.main }} to={{ pathname: '/'}}>Log Out</Link></Typography>
+                <Typography textAlign="center">Log Out</Typography>
               </MenuItem>
               </Box>
               )}

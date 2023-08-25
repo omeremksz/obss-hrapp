@@ -14,23 +14,17 @@ public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String code;
-
     private String title;
-
     private String location;
 
     @Lob
     @Column(columnDefinition = "text")
     private String description;
-
     private LocalDateTime activationTime;
-
     private LocalDateTime deactivationTime;
-
+    private String activationStatus;
     private String jobCategory;
-
     private String jobPosition;
 
     @OneToOne(fetch = FetchType.EAGER)

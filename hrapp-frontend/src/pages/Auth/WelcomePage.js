@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, TextField, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Snackbar, TextField, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../component/Navbar';
@@ -19,6 +19,9 @@ const WelcomePage = () => {
 
   const [linkedInProfileURL, setLinkedInProfileURL] = useState("");
   const [applicant, setApplicant] = useState(null);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const getApplicant = useCallback(() => {
     GetWithAuth("/applicants/"+applicantId)
@@ -50,8 +53,21 @@ const WelcomePage = () => {
   }
 
   const handleVerify = () => {
+    if (!linkedInProfileURL) {
+      setError("LinkedIn profile URL cannot be empty!");
+      setSnackbarOpen(true);
+      return; 
+    }
+
+    setSuccessMessage("Verification successful!");
+    setSnackbarOpen(true);
+
     updateApplicant();
     setLinkedInProfileURL("");
+
+    setTimeout(() => {
+      navigate('/applicants/' + applicantId);
+    }, 2000);
   }
 
   useEffect(() => {
@@ -92,6 +108,11 @@ const WelcomePage = () => {
                     </Box>
                 </Box>
             </Box>
+            <Snackbar open={snackbarOpen} autoHideDuration={successMessage ? 2000: 4000} onClose={() => setSnackbarOpen(false)} anchorOrigin={{vertical: "bottom", horizontal: "center"}}>
+              <Alert elevation={6} severity={successMessage ? "success" : "error"} onClose={() => setSnackbarOpen(false)} sx={{ width: '100%' }}>
+                {successMessage || error}
+              </Alert>
+            </Snackbar>
             <Footer />
         </Box>
     </>
