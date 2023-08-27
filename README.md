@@ -1,7 +1,7 @@
 # obss-hrapp
 Human Resources Job Management System
 
-This repository contains full-stack web application project that called Human Resources Job Management System developed during my summer internhsip at OBSS 17.07.2023 - 19.08.2023. 
+This repository contains full-stack web application project called "Human Resources Job Management System" developed during my summer internhsip at OBSS 17.07.2023 - 19.08.2023. 
 
 Technology Stack
 
