@@ -1,0 +1,1 @@
+'/specialists/:id/jobs/:jobId/applications'
